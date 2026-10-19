@@ -24,15 +24,19 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 // Ensure uploads directory exists
-const uploadsDir = path.join(__dirname, 'uploads');
+const uploadsDir = process.env.VERCEL ? path.join('/tmp', 'uploads') : path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
+  try {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+  } catch (err) {
+    console.warn('Uploads dir warning:', err.message);
+  }
 }
 
 // Multer Storage Configuration for uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, 'uploads'));
+    cb(null, uploadsDir);
   },
   filename: function (req, file, cb) {
     const ext = path.extname(file.originalname);
@@ -1046,8 +1050,13 @@ app.post('/admin/cabang/edit/:id', requireAdmin, (req, res) => {
   res.redirect('/admin/pengaturan?success=branch_updated');
 });
 
-// Start Server
-app.listen(PORT, () => {
-  console.log(`🚀 Anugrah Cell Ungaran Server running at http://localhost:${PORT}`);
-  console.log(`🔐 Admin Panel: http://localhost:${PORT}/admin (Login: admin@anugrahcell.com / admin123)`);
-});
+// Start Server (when run directly or locally)
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`🚀 Anugrah Cell Ungaran Server running at http://localhost:${PORT}`);
+    console.log(`🔐 Admin Panel: http://localhost:${PORT}/admin (Login: admin@anugrahcell.com / admin123)`);
+  });
+}
+
+// Export for Vercel Serverless Function
+module.exports = app;

@@ -3,12 +3,32 @@ const path = require('path');
 const bcrypt = require('bcryptjs');
 const fs = require('fs');
 
-const dbPath = path.join(__dirname, 'anugrah.db');
+let dbPath = path.join(__dirname, 'anugrah.db');
+
+// Handle Vercel Serverless read-only filesystem
+if (process.env.VERCEL) {
+  const tmpPath = path.join('/tmp', 'anugrah.db');
+  try {
+    if (!fs.existsSync(tmpPath)) {
+      if (fs.existsSync(dbPath)) {
+        fs.copyFileSync(dbPath, tmpPath);
+      }
+    }
+    dbPath = tmpPath;
+  } catch (err) {
+    console.error('Failed to copy db to /tmp on Vercel:', err);
+  }
+}
+
 const db = new Database(dbPath);
 
-// Enable foreign keys and WAL mode
-db.pragma('journal_mode = WAL');
-db.pragma('foreign_keys = ON');
+// Enable foreign keys and WAL mode (or standard mode on Vercel /tmp)
+try {
+  db.pragma('journal_mode = WAL');
+  db.pragma('foreign_keys = ON');
+} catch (e) {
+  console.warn('Pragma warning:', e.message);
+}
 
 function initDb() {
   // 1. Settings Table (key-value store for easy dynamic settings)
