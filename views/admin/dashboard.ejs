@@ -1,0 +1,120 @@
+<%- include('../partials/admin-header', { activeNav: 'dashboard' }) %>
+
+<div class="admin-header">
+  <div>
+    <h1 class="admin-title">Dashboard Admin</h1>
+    <div class="admin-subtitle">Selamat datang di Pusat Kontrol Penjualan Toko Anugrah Cell Ungaran</div>
+  </div>
+  <div>
+    <a href="/admin/produk/tambah" class="btn btn-gold btn-sm">
+      <i class="bi bi-plus-circle-fill"></i> Tambah Ponsel Baru
+    </a>
+  </div>
+</div>
+
+<!-- Stats Row -->
+<div class="stats-grid">
+  <div class="stat-card gold-border">
+    <div class="stat-label"><i class="bi bi-cash-stack text-gold"></i> TOTAL OMSET PENJUALAN</div>
+    <div class="stat-val gold"><%= formatRupiah(totalRevenue) %></div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-label"><i class="bi bi-bag-check-fill text-gold"></i> TOTAL TRANSAKSI</div>
+    <div class="stat-val"><%= totalOrders %> Pesanan</div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-label"><i class="bi bi-hourglass-split text-gold"></i> MENUNGGU PEMBAYARAN</div>
+    <div class="stat-val" style="color: #fbbf24;"><%= pendingOrders %></div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-label"><i class="bi bi-phone-fill text-gold"></i> TOTAL KATALOG PONSEL</div>
+    <div class="stat-val"><%= totalProducts %> Unit</div>
+  </div>
+</div>
+
+<!-- Recent Orders Table -->
+<div class="admin-card">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h3 style="font-size: 1.15rem; font-weight: 700;">Pesanan Terbaru Masuk</h3>
+    <a href="/admin/pesanan" style="font-size: 0.85rem; color: var(--accent-gold-light); font-weight: 600;">
+      Lihat Semua Pesanan <i class="bi bi-arrow-right"></i>
+    </a>
+  </div>
+
+  <% if (recentOrders.length === 0) { %>
+    <p style="color: var(--text-muted); text-align: center; padding: 30px 0;">Belum ada pesanan yang masuk.</p>
+  <% } else { %>
+    <div class="table-responsive">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>ID Pesanan</th>
+            <th>Nama Customer</th>
+            <th>WhatsApp</th>
+            <th>Metode Bayar</th>
+            <th>Total Tagihan</th>
+            <th>Status</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% recentOrders.forEach(ord => { %>
+            <tr>
+              <td><strong style="color: #fff;"><%= ord.id %></strong></td>
+              <td><%= ord.customer_name %></td>
+              <td>
+                <a href="https://wa.me/<%= ord.customer_phone.replace(/\D/g, '') %>" target="_blank" style="color: #25D366;">
+                  <i class="bi bi-whatsapp"></i> <%= ord.customer_phone %>
+                </a>
+              </td>
+              <td><%= ord.payment_method %></td>
+              <td><strong style="color: var(--accent-gold-light);"><%= formatRupiah(ord.total_amount) %></strong></td>
+              <td>
+                <span class="status-badge <%= ord.status === 'Selesai' ? 'status-selesai' : (ord.status === 'Dikirim' ? 'status-dikirim' : (ord.status === 'Diproses' ? 'status-diproses' : 'status-pending')) %>">
+                  <%= ord.status %>
+                </span>
+              </td>
+              <td>
+                <div style="display: flex; gap: 8px;">
+                  <a href="/admin/pesanan/resi-cetak/<%= ord.id %>" target="_blank" class="btn btn-outline-gold btn-sm" title="Cetak Resi Pengiriman">
+                    <i class="bi bi-printer"></i> Cetak Resi
+                  </a>
+                  <a href="/admin/pesanan" class="btn btn-dark btn-sm">
+                    Kelola
+                  </a>
+                </div>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } %>
+</div>
+
+<!-- Low Stock Warnings -->
+<% if (lowStock.length > 0) { %>
+  <div class="admin-card" style="border-color: rgba(239, 68, 68, 0.4);">
+    <h3 style="font-size: 1.1rem; font-weight: 700; color: #f87171; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+      <i class="bi bi-exclamation-triangle-fill"></i> Peringatan Stok Ponsel Menipis (&le; 3 Unit)
+    </h3>
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <% lowStock.forEach(item => { %>
+        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.02); padding: 10px 14px; border-radius: 8px;">
+          <div>
+            <strong><%= item.name %></strong> (<%= item.brand %>)
+          </div>
+          <div style="display: flex; align-items: center; gap: 15px;">
+            <span style="color: #f87171; font-weight: 700;">Sisa <%= item.stock %> Unit</span>
+            <a href="/admin/produk/edit/<%= item.id %>" class="btn btn-dark btn-sm">Tambah Stok</a>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+<% } %>
+
+<%- include('../partials/admin-footer') %>

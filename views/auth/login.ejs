@@ -1,0 +1,66 @@
+<%- include('../partials/header', { activePage: 'login' }) %>
+
+<div class="auth-wrapper">
+  <div class="auth-box">
+    
+    <!-- Auth Mode Switcher Tabs (Masuk vs Daftar) -->
+    <div class="auth-tabs">
+      <a href="/login<%= redirect ? '?redirect=' + encodeURIComponent(redirect) : '' %>" class="auth-tab active">
+        <i class="bi bi-box-arrow-in-right"></i> Masuk (Login)
+      </a>
+      <a href="/daftar<%= redirect ? '?redirect=' + encodeURIComponent(redirect) : '' %>" class="auth-tab">
+        <i class="bi bi-person-plus-fill"></i> Daftar Akun
+      </a>
+    </div>
+
+    <div class="auth-header">
+      <div class="app-logo-badge" style="margin: 0 auto 10px; width: 44px; height: 44px; font-size: 1.3rem;">
+        <i class="bi bi-shield-lock-fill"></i>
+      </div>
+      <h2 class="auth-title">Masuk ke <span class="neon-gradient-text">Akun</span></h2>
+      <p style="color: var(--text-secondary); font-size: 0.82rem; line-height: 1.4;">
+        Masukkan <strong>Email</strong> atau <strong>Nomor WhatsApp</strong> yang terdaftar
+      </p>
+    </div>
+
+    <% if (alert === 'login_required') { %>
+      <div class="alert alert-info" style="font-size: 0.78rem;">
+        <i class="bi bi-info-circle-fill"></i>
+        <span>Silakan masuk atau daftar akun terlebih dahulu untuk melanjutkan proses pembelian ponsel.</span>
+      </div>
+    <% } %>
+
+    <% if (error) { %>
+      <div class="alert alert-error" style="font-size: 0.78rem;">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <span><%= error %></span>
+      </div>
+    <% } %>
+
+    <form action="/login" method="POST">
+      <input type="hidden" name="redirect" value="<%= redirect %>">
+
+      <div class="form-group">
+        <label class="form-label">Email atau Nomor WhatsApp / Ponsel *</label>
+        <input type="text" name="identifier" class="form-control" placeholder="contoh: 08123456789 atau nama@email.com" required autofocus>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Kata Sandi *</label>
+        <input type="password" name="password" class="form-control" placeholder="Masukkan kata sandi Anda" required>
+      </div>
+
+      <div style="margin-top: 20px;">
+        <button type="submit" class="btn btn-neon-primary" style="width: 100%; padding: 11px; font-size: 0.95rem;">
+          <i class="bi bi-box-arrow-in-right"></i> Masuk Sekarang
+        </button>
+      </div>
+    </form>
+
+    <div style="text-align: center; margin-top: 20px; padding-top: 14px; border-top: 1px solid #f1f5f9; font-size: 0.82rem; color: var(--text-secondary);">
+      Belum punya akun? <a href="/daftar<%= redirect ? '?redirect=' + encodeURIComponent(redirect) : '' %>" style="color: #0284c7; font-weight: 800;">Daftar Akun Baru di Sini &rarr;</a>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,58 @@
+  </main>
+
+  <!-- Clean Bright Footer (No Admin Links Visible) -->
+  <footer class="app-footer">
+    <div class="container">
+      <div style="margin-bottom: 16px;">
+        <div style="font-weight: 900; font-size: 1.05rem; color: var(--text-main); margin-bottom: 4px;">
+          <%= settings.store_name || 'Anugrah Cell Ungaran' %>
+        </div>
+        <p style="color: var(--text-secondary); font-size: 0.78rem; max-width: 440px; margin: 0 auto 12px; line-height: 1.45;">
+          <%= settings.store_tagline || 'Pusat Smartphone Original & Bergaransi Terlengkap di Kabupaten Semarang.' %>
+        </p>
+        <div style="display: flex; gap: 6px; justify-content: center; font-size: 0.72rem; color: var(--text-secondary); flex-wrap: wrap; margin-bottom: 14px;">
+          <span class="spec-chip"><i class="bi bi-shield-check" style="color: #0284c7;"></i> 100% Original</span>
+          <span class="spec-chip"><i class="bi bi-qr-code" style="color: #0284c7;"></i> Bayar QRIS</span>
+          <span class="spec-chip"><i class="bi bi-bank" style="color: #7c3aed;"></i> Transfer BCA & BRI</span>
+          <span class="spec-chip"><i class="bi bi-printer" style="color: #10b981;"></i> Resi Cetak</span>
+        </div>
+        <button type="button" id="footerInstallBtn" class="pwa-footer-install-btn" onclick="triggerPwaInstall()">
+          <i class="bi bi-phone-fill"></i> Instal Aplikasi Anugrah Cell di HP (1-Klik)
+        </button>
+      </div>
+
+      <div style="border-top: 1px solid #f1f5f9; padding-top: 12px; font-size: 0.74rem; color: var(--text-muted); line-height: 1.4;">
+        &copy; <%= new Date().getFullYear() %> <strong>Anugrah Cell Ungaran</strong> &bull; Harjosari &bull; 3 Cabang Kab. Semarang
+      </div>
+    </div>
+  </footer>
+
+  </div> <!-- End of .app-screen-container (9:16 mobile canvas) -->
+
+  <!-- PWA Smart Install Helper Modal -->
+  <div id="pwaInstallModal" class="pwa-modal-overlay" onclick="if(event.target===this) closePwaModal()">
+    <div class="pwa-modal-card">
+      <button type="button" class="pwa-modal-close" onclick="closePwaModal()" aria-label="Tutup">&times;</button>
+      <img src="/images/app-icon-192.png" alt="Anugrah Cell App" class="pwa-modal-app-icon">
+      <h3 class="pwa-modal-title">Instal Aplikasi Anugrah Cell</h3>
+      <p class="pwa-modal-desc">Nikmati pengalaman belanja HP lebih cepat, ringan, hemat kuota, dan akses langsung dari layar utama ponsel Anda!</p>
+      
+      <div id="pwaModalSteps" class="pwa-modal-steps">
+        <!-- Dynamically populated based on Android / iOS -->
+      </div>
+
+      <button type="button" class="pwa-modal-action-btn" onclick="closePwaModal()">
+        Mengerti & Tutup
+      </button>
+    </div>
+  </div>
+
+  <!-- Draggable AI Chatbot Widget -->
+  <%- include('chatbot') %>
+
+  <!-- Global Client Scripts with SSE Sync & PWA 1-Click Installer -->
+  <script src="/js/main.js"></script>
+  <!-- Gemini AI Sales Chatbot Script -->
+  <script src="/js/chatbot.js"></script>
+</body>
+</html>

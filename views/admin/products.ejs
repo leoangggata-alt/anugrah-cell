@@ -1,0 +1,115 @@
+<%- include('../partials/admin-header', { activeNav: 'products' }) %>
+
+<div class="admin-header">
+  <div>
+    <h1 class="admin-title">Katalog & Harga Ponsel</h1>
+    <div class="admin-subtitle">Kelola produk, stok, dan ubah harga secara manual dengan update real-time paralel ke semua pengunjung</div>
+  </div>
+  <div>
+    <a href="/admin/produk/tambah" class="btn btn-gold">
+      <i class="bi bi-plus-circle-fill"></i> Tambah Ponsel Baru
+    </a>
+  </div>
+</div>
+
+<% if (success === 'added') { %>
+  <div class="alert alert-success">
+    <i class="bi bi-check-circle-fill"></i> Ponsel baru berhasil ditambahkan dan disinkronkan ke layar depan!
+  </div>
+<% } else if (success === 'updated') { %>
+  <div class="alert alert-success">
+    <i class="bi bi-check-circle-fill"></i> Data produk ponsel berhasil diperbarui secara real-time!
+  </div>
+<% } else if (success === 'deleted') { %>
+  <div class="alert alert-info">
+    <i class="bi bi-trash-fill"></i> Produk ponsel telah dihapus dari katalog.
+  </div>
+<% } else if (success === 'price_updated') { %>
+  <div class="alert alert-success">
+    <i class="bi bi-lightning-charge-fill"></i> Harga ponsel berhasil diubah dan disinkronkan secara realtime ke seluruh web!
+  </div>
+<% } %>
+
+<div class="admin-card">
+  <div class="table-responsive">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Ponsel</th>
+          <th>Brand & Kategori</th>
+          <th style="min-width: 220px;">Ubah Harga Manual (Realtime)</th>
+          <th>Stok</th>
+          <th>Spesifikasi</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (products.length === 0) { %>
+          <tr>
+            <td colspan="6" style="text-align: center; padding: 40px; color: var(--text-muted);">
+              Belum ada produk ponsel. Silakan klik tombol "Tambah Ponsel Baru" di atas.
+            </td>
+          </tr>
+        <% } %>
+
+        <% products.forEach(prod => { %>
+          <tr>
+            <td>
+              <div style="display: flex; gap: 12px; align-items: center;">
+                <img src="<%= prod.image %>" alt="<%= prod.name %>" style="width: 48px; height: 48px; object-fit: cover; border-radius: 6px;">
+                <div>
+                  <strong style="color: #fff;"><%= prod.name %></strong>
+                  <div style="font-size: 0.75rem; color: var(--text-muted);"><%= prod.warranty %></div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="spec-pill" style="border-color: var(--accent-gold); color: #fff;"><%= prod.brand %></span>
+              <div style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 4px;"><%= prod.category %></div>
+            </td>
+            <td>
+              <!-- Fast Price Edit Form (Real-Time Parallel) -->
+              <form action="/admin/produk/quick-price/<%= prod.id %>" method="POST" style="display: flex; gap: 6px; align-items: center;">
+                <div style="position: relative; flex: 1;">
+                  <span style="position: absolute; left: 8px; top: 8px; font-size: 0.75rem; color: var(--text-muted);">Rp</span>
+                  <input type="number" name="price" value="<%= prod.price %>" class="form-control" style="height: 34px; font-size: 0.85rem; padding-left: 28px; width: 130px; font-weight: 700; color: #fbbf24;" required>
+                </div>
+                <button type="submit" class="btn btn-outline-gold btn-sm" style="height: 34px; padding: 4px 10px;" title="Update Harga Realtime">
+                  <i class="bi bi-check-lg"></i> Simpan
+                </button>
+              </form>
+              <% if (prod.original_price) { %>
+                <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">
+                  Harga Coret: <%= formatRupiah(prod.original_price) %>
+                </div>
+              <% } %>
+            </td>
+            <td>
+              <span style="font-weight: 700; color: <%= prod.stock <= 3 ? '#ef4444' : '#10b981' %>;">
+                <%= prod.stock %> Unit
+              </span>
+            </td>
+            <td style="font-size: 0.8rem; color: var(--text-secondary);">
+              <div><%= prod.ram || '-' %> / <%= prod.storage || '-' %></div>
+              <div><%= prod.chipset || '-' %></div>
+            </td>
+            <td>
+              <div style="display: flex; gap: 8px;">
+                <a href="/admin/produk/edit/<%= prod.id %>" class="btn btn-dark btn-sm" title="Edit Lengkap">
+                  <i class="bi bi-pencil-square"></i>
+                </a>
+                <form action="/admin/produk/hapus/<%= prod.id %>" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus ponsel ini?');">
+                  <button type="submit" class="btn btn-dark btn-sm" style="color: #ef4444;" title="Hapus Produk">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<%- include('../partials/admin-footer') %>

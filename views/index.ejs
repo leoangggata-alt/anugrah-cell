@@ -1,0 +1,244 @@
+<%- include('partials/header', { activePage: 'home' }) %>
+
+<div class="container" style="padding-top: 10px;">
+
+  <!-- Hero Banner (100% Match to Recommendation Mockup, Full Responsive Mobile Fit, No Cut-Offs) -->
+  <section class="hero-banner-section">
+    <div class="hero-banner-container">
+      <img src="/images/hero-banner.png" 
+           srcset="/images/hero-banner.png 1x, /images/hero-banner@2x.png 2x" 
+           alt="Anugrah Cell Ungaran - Pusat Gadget & Ponsel Original Bergaransi" 
+           class="hero-banner-img">
+      <!-- Clickable Action Hotspots -->
+      <a href="/katalog" class="hero-hotspot-btn hero-btn-catalog" title="Buka Katalog"></a>
+      <a href="#cabang" class="hero-hotspot-btn hero-btn-branches" title="3 Cabang Toko"></a>
+    </div>
+  </section>
+
+  <!-- Category Icons Row (Matching Recommendation Mockup) -->
+  <section class="categories-section">
+    <div class="categories-scroll-row">
+      <a href="/katalog?brand=Apple" class="category-card-item">
+        <div class="cat-icon-circle cat-apple">
+          <i class="bi bi-apple"></i>
+        </div>
+        <span class="cat-label">Apple</span>
+      </a>
+
+      <a href="/katalog?brand=Samsung" class="category-card-item">
+        <div class="cat-icon-circle cat-samsung">
+          <span class="cat-text-logo">SAMSUNG</span>
+        </div>
+        <span class="cat-label">Samsung</span>
+      </a>
+
+      <a href="/katalog?brand=Xiaomi" class="category-card-item">
+        <div class="cat-icon-circle cat-xiaomi">
+          <span class="cat-text-logo">וח</span>
+        </div>
+        <span class="cat-label">Xiaomi</span>
+      </a>
+
+      <a href="/katalog?brand=OPPO" class="category-card-item">
+        <div class="cat-icon-circle cat-oppo">
+          <span class="cat-text-logo">oppo</span>
+        </div>
+        <span class="cat-label">OPPO</span>
+      </a>
+
+      <a href="/katalog?brand=Vivo" class="category-card-item">
+        <div class="cat-icon-circle cat-vivo">
+          <span class="cat-text-logo">vivo</span>
+        </div>
+        <span class="cat-label">vivo</span>
+      </a>
+
+      <a href="/katalog?brand=Realme" class="category-card-item">
+        <div class="cat-icon-circle cat-realme">
+          <span class="cat-text-logo">realme</span>
+        </div>
+        <span class="cat-label">realme</span>
+      </a>
+
+      <a href="/katalog?category=Aksesoris" class="category-card-item">
+        <div class="cat-icon-circle cat-accessories">
+          <i class="bi bi-headphones"></i>
+        </div>
+        <span class="cat-label">Aksesoris</span>
+      </a>
+
+      <a href="/katalog" class="category-card-item">
+        <div class="cat-icon-circle cat-all">
+          <i class="bi bi-grid-fill"></i>
+        </div>
+        <span class="cat-label">Semua Kategori</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- 3 Trust / Value Props Cards -->
+  <section class="trust-cards-section">
+    <div class="trust-cards-grid">
+      <div class="trust-card-box trust-blue">
+        <div class="trust-icon-box trust-icon-blue">
+          <i class="bi bi-shield-shaded"></i>
+        </div>
+        <div class="trust-text-box">
+          <h4>Produk Original</h4>
+          <p>Semua unit 100% asli & bergaransi resmi.</p>
+        </div>
+      </div>
+
+      <div class="trust-card-box trust-purple">
+        <div class="trust-icon-box trust-icon-purple">
+          <i class="bi bi-truck"></i>
+        </div>
+        <div class="trust-text-box">
+          <h4>Pengiriman Cepat</h4>
+          <p>Proses cepat & aman ke seluruh Indonesia.</p>
+        </div>
+      </div>
+
+      <div class="trust-card-box trust-green">
+        <div class="trust-icon-box trust-icon-green">
+          <i class="bi bi-headset"></i>
+        </div>
+        <div class="trust-text-box">
+          <h4>Pelayanan Ramah</h4>
+          <p>Tim profesional siap membantu Anda.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section: Produk Unggulan (Matching Mockup with Badges & Specs) -->
+  <section class="app-section" style="padding-top: 14px;">
+    <div class="section-title-wrap">
+      <div class="section-title-left">
+        <div class="section-title-icon-flame">
+          <i class="bi bi-fire"></i>
+        </div>
+        <div>
+          <h3 class="section-heading" style="margin-bottom: 2px;">Produk Unggulan</h3>
+          <p class="section-subheading">Pilihan terbaik dengan harga bersaing</p>
+        </div>
+      </div>
+      <a href="/katalog" class="section-link">
+        Lihat Semua <i class="bi bi-chevron-right"></i>
+      </a>
+    </div>
+
+    <!-- Product Cards Grid (Matching Mockup Layout) -->
+    <div class="products-grid-mobile">
+      <% 
+        const badgeColors = ['badge-red', 'badge-blue', 'badge-orange', 'badge-green'];
+        const badgeLabels = ['Terlaris', 'New', 'Best Deal', 'Populer'];
+        featuredProducts.forEach((product, index) => { 
+          const badgeClass = badgeColors[index % badgeColors.length];
+          const badgeLabel = badgeLabels[index % badgeLabels.length];
+      %>
+        <div class="mockup-product-card">
+          <!-- Top Tag Badge (Terlaris, New, Best Deal, Populer) -->
+          <div class="product-badge-corner <%= badgeClass %>">
+            <%= badgeLabel %>
+          </div>
+
+          <!-- Product Image Centered -->
+          <div class="mockup-img-wrap">
+            <img src="<%= product.image %>" alt="<%= product.name %>" loading="lazy">
+          </div>
+
+          <!-- Product Card Body -->
+          <div class="mockup-card-body">
+            <a href="/produk/<%= product.id %>" class="mockup-product-title" title="<%= product.name %>">
+              <%= product.name %>
+            </a>
+
+            <!-- Specs line -->
+            <div class="mockup-product-specs">
+              <% if (product.ram && product.storage) { %>
+                <%= product.ram %> | <%= product.storage %>
+              <% } else if (product.storage) { %>
+                128GB | 256GB | 512GB
+              <% } else { %>
+                Resmi iBox / SEIN
+              <% } %>
+            </div>
+
+            <!-- Price Wrap with 'Mulai dari' -->
+            <div class="mockup-price-wrap">
+              <span class="mockup-price-label">Mulai dari</span>
+              <div class="mockup-price-value"><%= formatRupiah(product.price) %></div>
+            </div>
+
+            <!-- Solid Blue Button (Direct Buy) -->
+            <a href="/beli-langsung/<%= product.id %>" class="btn-mockup-buy">
+              <i class="bi bi-cart3"></i> Beli Sekarang
+            </a>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </section>
+
+  <!-- Store Availability Banner (Matching Mockup with Hotline & Branches) -->
+  <section class="store-availability-banner-section">
+    <div class="store-banner-container">
+      <img src="/images/store-banner.png" 
+           srcset="/images/store-banner.png 1x, /images/store-banner@2x.png 2x" 
+           alt="Cek Ketersediaan Stok Langsung" 
+           class="store-banner-img">
+      <a href="#cabang" class="store-hotspot-btn" title="Lihat Stok di 3 Cabang"></a>
+    </div>
+  </section>
+
+  <!-- 3 Cabang Kabupaten Semarang Section -->
+  <section class="app-section" id="cabang" style="margin-top: 10px; padding-bottom: 24px;">
+    <div class="section-title-wrap">
+      <div class="section-title-left">
+        <div class="section-title-icon-flame" style="background: #e0f2fe; color: #0284c7;">
+          <i class="bi bi-buildings-fill"></i>
+        </div>
+        <div>
+          <h3 class="section-heading" style="margin-bottom: 2px;">Lokasi 3 Cabang Toko</h3>
+          <p class="section-subheading">Kunjungi gerai fisik resmi kami di Kabupaten Semarang</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+      <% branches.forEach(branch => { %>
+        <div class="branch-app-card <%= branch.is_main ? 'is-main' : '' %>">
+          <% if (branch.is_main) { %>
+            <span class="branch-badge-main"><i class="bi bi-crown-fill text-gold"></i> PUSAT HARJOSARI</span>
+          <% } %>
+
+          <div class="branch-app-name">
+            <i class="bi bi-shop text-gold"></i> <%= branch.name %>
+          </div>
+
+          <div class="branch-app-addr">
+            <i class="bi bi-geo-alt-fill" style="color: #ef4444;"></i> <%= branch.address %>
+          </div>
+
+          <div class="branch-app-meta">
+            <div><i class="bi bi-clock"></i> <%= branch.opening_hours %></div>
+            <div><i class="bi bi-telephone"></i> <%= branch.phone %></div>
+          </div>
+
+          <div style="display: flex; gap: 8px;">
+            <a href="<%= branch.maps_url || '#' %>" target="_blank" class="btn btn-neon-outline btn-sm" style="flex: 1;">
+              <i class="bi bi-map-fill"></i> Google Maps
+            </a>
+            <a href="https://wa.me/<%= branch.phone.replace(/\D/g, '') %>?text=Halo%20Admin%20<%= encodeURIComponent(branch.name) %>" target="_blank" class="btn btn-whatsapp btn-sm">
+              <i class="bi bi-whatsapp"></i> Chat WA
+            </a>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </section>
+
+</div>
+
+<%- include('partials/footer') %>

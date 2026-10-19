@@ -1,0 +1,175 @@
+<%- include('../partials/admin-header', { activeNav: 'orders' }) %>
+
+<div class="admin-header">
+  <div>
+    <h1 class="admin-title">Pesanan & Resi Pengiriman</h1>
+    <div class="admin-subtitle">Kelola pesanan pelanggan, perbarui nomor resi pengiriman, dan cetak bukti resi / invoice</div>
+  </div>
+  <div>
+    <a href="/admin/pesanan" class="btn btn-dark btn-sm">
+      <i class="bi bi-arrow-clockwise"></i> Refresh
+    </a>
+  </div>
+</div>
+
+<% if (success === 'status_updated') { %>
+  <div class="alert alert-success">
+    <i class="bi bi-check-circle-fill"></i> Status pesanan berhasil diperbarui!
+  </div>
+<% } else if (success === 'resi_updated') { %>
+  <div class="alert alert-success">
+    <i class="bi bi-check-circle-fill"></i> Nomor resi pengiriman berhasil disimpan dan status diubah ke 'Dikirim'!
+  </div>
+<% } %>
+
+<!-- Filter Status Tabs -->
+<div style="display: flex; gap: 10px; margin-bottom: 25px; overflow-x: auto; padding-bottom: 8px;">
+  <% const statuses = ['Semua', 'Menunggu Pembayaran', 'Diproses', 'Dikirim', 'Selesai', 'Dibatalkan']; %>
+  <% statuses.forEach(st => { %>
+    <a href="/admin/pesanan<%= st !== 'Semua' ? '?status=' + encodeURIComponent(st) : '' %>" 
+       class="chip <%= selectedStatus === st ? 'active' : '' %>">
+      <%= st %>
+    </a>
+  <% }) %>
+</div>
+
+<div class="admin-card">
+  <% if (orders.length === 0) { %>
+    <div style="text-align: center; padding: 50px 20px; color: var(--text-muted);">
+      <i class="bi bi-inbox" style="font-size: 3rem; display: block; margin-bottom: 12px;"></i>
+      <h3 style="font-size: 1.2rem; color: #fff;">Tidak Ada Pesanan</h3>
+      <p>Belum ada transaksi dengan status ini.</p>
+    </div>
+  <% } else { %>
+    <div style="display: flex; flex-direction: column; gap: 24px;">
+      <% orders.forEach(ord => { %>
+        <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: 12px; padding: 22px;">
+          
+          <!-- Top Row: Order ID, Date, Status -->
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 14px; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+            <div>
+              <span style="font-size: 0.8rem; color: var(--text-muted);">ID Pesanan:</span>
+              <strong style="color: #fff; font-size: 1.1rem; margin-left: 6px;"><%= ord.id %></strong>
+              <span style="margin: 0 10px; color: var(--text-muted);">&bull;</span>
+              <span style="font-size: 0.82rem; color: var(--text-secondary);"><%= formatDate(ord.created_at) %></span>
+            </div>
+
+            <div style="display: flex; gap: 12px; align-items: center;">
+              <span class="status-badge <%= ord.status === 'Selesai' ? 'status-selesai' : (ord.status === 'Dikirim' ? 'status-dikirim' : (ord.status === 'Diproses' ? 'status-diproses' : 'status-pending')) %>">
+                <%= ord.status %>
+              </span>
+
+              <!-- Cetak Resi Button (Printable) -->
+              <a href="/admin/pesanan/resi-cetak/<%= ord.id %>" target="_blank" class="btn btn-gold btn-sm" style="box-shadow: none;">
+                <i class="bi bi-printer-fill"></i> Cetak Resi / Invoice
+              </a>
+            </div>
+          </div>
+
+          <!-- Middle Grid: Customer Info & Items -->
+          <div style="display: grid; grid-template-columns: 1.2fr 1.8fr; gap: 24px; margin-bottom: 20px;">
+            
+            <!-- Customer & Shipping Destination -->
+            <div style="background: rgba(0, 0, 0, 0.25); border-radius: 8px; padding: 16px; font-size: 0.88rem;">
+              <div style="font-weight: 700; color: var(--accent-gold-light); margin-bottom: 8px;">
+                <i class="bi bi-person-fill"></i> Data Pelanggan:
+              </div>
+              <div style="color: #fff; font-weight: 600; font-size: 0.95rem;"><%= ord.customer_name %></div>
+              <div style="margin-top: 4px;">
+                <a href="https://wa.me/<%= ord.customer_phone.replace(/\D/g, '') %>?text=Halo%20kak%20<%= encodeURIComponent(ord.customer_name) %>,%20mengenai%20pesanan%20<%= ord.id %>..." 
+                   target="_blank" class="btn btn-whatsapp btn-sm" style="display: inline-flex; margin-top: 6px; padding: 4px 10px; font-size: 0.78rem;">
+                  <i class="bi bi-whatsapp"></i> Chat: <%= ord.customer_phone %>
+                </a>
+              </div>
+              
+              <div style="margin-top: 14px; border-top: 1px dashed var(--border-color); padding-top: 10px;">
+                <span style="color: var(--text-muted); font-size: 0.8rem;">Tujuan / Cabang:</span>
+                <div style="color: var(--text-secondary); line-height: 1.4; margin-top: 2px;">
+                  <%= ord.shipping_method === 'Ambil di Toko' ? ord.pickup_branch : ord.shipping_address %>
+                </div>
+              </div>
+
+              <% if (ord.notes) { %>
+                <div style="margin-top: 8px; font-size: 0.8rem; color: #fbbf24;">
+                  <strong>Catatan:</strong> <%= ord.notes %>
+                </div>
+              <% } %>
+            </div>
+
+            <!-- Items Ordered -->
+            <div>
+              <div style="font-weight: 700; color: #fff; margin-bottom: 10px; font-size: 0.9rem;">
+                <i class="bi bi-box-seam text-gold"></i> Ponsel yang Dipesan:
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                <% ord.items.forEach(it => { %>
+                  <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.02); padding: 8px 12px; border-radius: 6px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                      <img src="<%= it.product_image %>" alt="" style="width: 38px; height: 38px; object-fit: cover; border-radius: 4px;">
+                      <div>
+                        <div style="font-weight: 600; color: #fff; font-size: 0.88rem;"><%= it.product_name %></div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);"><%= it.quantity %>x @ <%= formatRupiah(it.price) %></div>
+                      </div>
+                    </div>
+                    <div style="font-weight: 700; color: var(--accent-gold-light); font-size: 0.9rem;">
+                      <%= formatRupiah(it.subtotal) %>
+                    </div>
+                  </div>
+                <% }) %>
+              </div>
+
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border-color);">
+                <div style="font-size: 0.85rem; color: var(--text-muted);">
+                  Metode: <strong><%= ord.payment_method %></strong>
+                </div>
+                <div style="font-size: 1.15rem; font-weight: 800; color: #fff;">
+                  Total: <span style="color: var(--accent-gold-light);"><%= formatRupiah(ord.total_amount) %></span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Bottom Action Controls: Resi Input & Status Change -->
+          <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 20px; background: rgba(0, 0, 0, 0.15); padding: 14px; border-radius: 8px; border: 1px solid var(--border-color);">
+            
+            <!-- Resi Input Form -->
+            <form action="/admin/pesanan/resi/<%= ord.id %>" method="POST" style="display: flex; gap: 8px; align-items: center;">
+              <div style="flex: 1;">
+                <input type="text" name="tracking_number" class="form-control" style="height: 38px; font-size: 0.85rem;" placeholder="Input No. Resi Pengiriman" value="<%= ord.tracking_number || '' %>" required>
+              </div>
+              <div style="width: 140px;">
+                <select name="shipping_courier" class="form-control" style="height: 38px; font-size: 0.85rem;">
+                  <option value="Kurir Toko Anugrah" <%= ord.shipping_courier === 'Kurir Toko Anugrah' ? 'selected' : '' %>>Kurir Toko</option>
+                  <option value="J&T Express" <%= ord.shipping_courier === 'J&T Express' ? 'selected' : '' %>>J&T Express</option>
+                  <option value="JNE Reguler" <%= ord.shipping_courier === 'JNE Reguler' ? 'selected' : '' %>>JNE Reguler</option>
+                  <option value="SiCepat" <%= ord.shipping_courier === 'SiCepat' ? 'selected' : '' %>>SiCepat</option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-outline-gold btn-sm" style="height: 38px;">
+                <i class="bi bi-upc-scan"></i> Simpan Resi
+              </button>
+            </form>
+
+            <!-- Status Update Form -->
+            <form action="/admin/pesanan/status/<%= ord.id %>" method="POST" style="display: flex; gap: 8px; align-items: center; justify-content: flex-end;">
+              <span style="font-size: 0.82rem; color: var(--text-muted);">Status:</span>
+              <select name="status" class="form-control" style="width: 190px; height: 38px; font-size: 0.85rem;">
+                <option value="Menunggu Pembayaran" <%= ord.status === 'Menunggu Pembayaran' ? 'selected' : '' %>>Menunggu Pembayaran</option>
+                <option value="Diproses" <%= ord.status === 'Diproses' ? 'selected' : '' %>>Diproses / Packing</option>
+                <option value="Dikirim" <%= ord.status === 'Dikirim' ? 'selected' : '' %>>Dikirim (Kurir)</option>
+                <option value="Selesai" <%= ord.status === 'Selesai' ? 'selected' : '' %>>Selesai</option>
+                <option value="Dibatalkan" <%= ord.status === 'Dibatalkan' ? 'selected' : '' %>>Dibatalkan</option>
+              </select>
+              <button type="submit" class="btn btn-dark btn-sm" style="height: 38px;">Update</button>
+            </form>
+
+          </div>
+
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/admin-footer') %>

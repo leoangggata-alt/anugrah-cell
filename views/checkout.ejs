@@ -1,0 +1,201 @@
+<%- include('partials/header') %>
+
+<div class="container" style="padding-top: 14px; padding-bottom: 40px;">
+  <div style="margin-bottom: 14px;">
+    <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">
+      <a href="/katalog" style="color: var(--neon-cyan); font-weight: 600;">Katalog</a> / <span style="color: var(--text-secondary);">Beli Langsung</span>
+    </div>
+    <h1 style="font-size: 1.35rem; font-weight: 900; color: var(--text-main); margin: 0; letter-spacing: -0.3px;">
+      Checkout <span class="neon-gradient-text">Pembayaran</span>
+    </h1>
+    <div style="font-size: 0.78rem; color: var(--text-secondary);">Lengkapi data tujuan & pilih metode bayar resmi Anugrah Cell</div>
+  </div>
+
+  <form action="/checkout" method="POST">
+    <div style="display: flex; flex-direction: column; gap: 14px;">
+      
+      <!-- Customer Information Card -->
+      <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: var(--radius-md); padding: 16px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);">
+        <h3 style="font-size: 0.98rem; font-weight: 800; color: var(--text-main); margin-bottom: 14px; display: flex; align-items: center; gap: 6px;">
+          <i class="bi bi-person-circle" style="color: #7c3aed;"></i> 1. Informasi Pemesan
+        </h3>
+
+        <div class="form-group">
+          <label class="form-label">Nama Lengkap *</label>
+          <input type="text" name="customer_name" class="form-control" value="<%= user ? user.name : '' %>" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Nomor WhatsApp Aktif *</label>
+          <input type="text" name="customer_phone" class="form-control" value="<%= user ? user.phone : '' %>" required>
+          <div class="form-hint">Digunakan untuk konfirmasi pesanan via WhatsApp & kirim resi</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Metode Pengiriman / Pengambilan *</label>
+          <select name="shipping_method" id="shipping_method" class="form-control" onchange="togglePickupBranch(this.value)">
+            <option value="Kurir Toko / Ekspedisi (Kirim ke Alamat)">Dikirim Kurir Toko ke Alamat (Kab. Semarang & Sekitarnya)</option>
+            <option value="Ambil di Toko">Ambil Sendiri di Salah Satu dari 3 Cabang Toko</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="pickup_branch_group" style="display: none;">
+          <label class="form-label">Pilih Cabang Pengambilan *</label>
+          <select name="pickup_branch" class="form-control">
+            <% branches.forEach(branch => { %>
+              <option value="<%= branch.name %> - <%= branch.address %>">
+                <%= branch.name %> (<%= branch.address %>)
+              </option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="form-group" id="address_group">
+          <label class="form-label">Alamat Lengkap Pengiriman *</label>
+          <textarea name="shipping_address" class="form-control" rows="2" placeholder="Nama Jalan, No. Rumah, RT/RW, Harjosari / Kab. Semarang..." required><%= user ? user.address || '' : '' %></textarea>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0;">
+          <label class="form-label">Catatan Pesanan (Opsional)</label>
+          <input type="text" name="notes" class="form-control" placeholder="Contoh: Packing kayu, warna hitam...">
+        </div>
+      </div>
+
+      <!-- Payment Methods Card -->
+      <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: var(--radius-md); padding: 16px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);">
+        <h3 style="font-size: 0.98rem; font-weight: 800; color: var(--text-main); margin-bottom: 14px; display: flex; align-items: center; gap: 6px;">
+          <i class="bi bi-wallet2" style="color: #0284c7;"></i> 2. Metode Pembayaran Resmi Toko
+        </h3>
+
+        <!-- Option 1: QRIS -->
+        <div style="border: 1.5px solid #00d4ff; background: #f0fdff; border-radius: 12px; padding: 14px; margin-bottom: 12px; cursor: pointer; box-shadow: 0 2px 10px rgba(0, 212, 255, 0.12);" onclick="selectPayment('QRIS')">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin: 0; font-weight: 800; color: var(--text-main); font-size: 0.88rem;">
+              <input type="radio" name="payment_method" id="pay_qris" value="QRIS" checked>
+              <span><i class="bi bi-qr-code-scan" style="color: #0284c7;"></i> QRIS Instan (Semua Bank & E-Wallet)</span>
+            </label>
+            <span class="neon-pill-tag cyan">Rekomendasi</span>
+          </div>
+
+          <div id="qris_details" style="text-align: center; margin-top: 14px; background: #ffffff; border-radius: 10px; padding: 14px; border: 1px solid #a5f3fc;">
+            <div style="font-size: 0.78rem; color: #475569; margin-bottom: 8px;">Scan QRIS ini dengan BCA Mobile, BRImo, Livin, GoPay, OVO, Dana:</div>
+            <img src="<%= settings.qris_image || '/images/qris-sample.png' %>" alt="QRIS Toko Anugrah Cell" style="max-width: 180px; margin: 0 auto; display: block; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+            <div style="font-size: 0.82rem; font-weight: 800; margin-top: 8px; color: #0f172a;">ANUGRAH CELL UNGARAN</div>
+          </div>
+        </div>
+
+        <!-- Option 2: Bank Transfer -->
+        <div style="border: 1.5px solid #e2e8f0; background: #ffffff; border-radius: 12px; padding: 14px; cursor: pointer;" onclick="selectPayment('Transfer Bank')">
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin: 0; font-weight: 800; color: var(--text-main); font-size: 0.88rem;">
+            <input type="radio" name="payment_method" id="pay_bank" value="Transfer Bank">
+            <span><i class="bi bi-bank" style="color: #7c3aed;"></i> Transfer Bank Manual (BCA & BRI)</span>
+          </label>
+
+          <div id="bank_details" style="display: none; margin-top: 14px;">
+            <!-- BCA -->
+            <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700;"><%= settings.bank_name || 'BCA (Bank Central Asia)' %></div>
+                <div style="font-size: 1.05rem; font-weight: 900; color: #0284c7; letter-spacing: 0.5px;">
+                  <%= settings.bank_account || '8910452391' %>
+                </div>
+                <div style="font-size: 0.76rem; color: var(--text-secondary);">a/n <%= settings.bank_holder || 'ANUGRAH CELL UNGARAN' %></div>
+              </div>
+              <button type="button" onclick="copyToClipboard('<%= settings.bank_account || '8910452391' %>', 'No. Rekening BCA')" class="btn btn-neon-outline btn-sm">
+                <i class="bi bi-clipboard"></i> Salin
+              </button>
+            </div>
+
+            <!-- BRI -->
+            <% if (settings.bank_account_2) { %>
+              <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 12px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700;"><%= settings.bank_name_2 || 'BRI (Bank Rakyat Indonesia)' %></div>
+                  <div style="font-size: 1.05rem; font-weight: 900; color: #0284c7; letter-spacing: 0.5px;">
+                    <%= settings.bank_account_2 %>
+                  </div>
+                  <div style="font-size: 0.76rem; color: var(--text-secondary);">a/n <%= settings.bank_holder_2 || 'ANUGRAH CELL UNGARAN' %></div>
+                </div>
+                <button type="button" onclick="copyToClipboard('<%= settings.bank_account_2 %>', 'No. Rekening BRI')" class="btn btn-neon-outline btn-sm">
+                  <i class="bi bi-clipboard"></i> Salin
+                </button>
+              </div>
+            <% } %>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Order Summary & Submit Button -->
+      <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: var(--radius-md); padding: 16px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);">
+        <h4 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 12px; color: var(--text-main);">Ringkasan Pesanan</h4>
+
+        <div style="max-height: 200px; overflow-y: auto; margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">
+          <% cart.forEach(it => { %>
+            <div style="display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 6px;">
+              <span><%= it.name %> (x<%= it.quantity %>)</span>
+              <strong style="color: var(--text-main);"><%= formatRupiah(it.price * it.quantity) %></strong>
+            </div>
+          <% }) %>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <span style="font-weight: 800; font-size: 0.95rem; color: var(--text-main);">Total Pembayaran</span>
+          <span style="font-weight: 900; font-size: 1.3rem; color: #0284c7;"><%= formatRupiah(cartTotal) %></span>
+        </div>
+
+        <button type="submit" class="btn btn-neon-primary" style="width: 100%; padding: 12px; font-size: 0.95rem;">
+          <i class="bi bi-check2-circle"></i> Buat Pesanan Sekarang
+        </button>
+
+        <div style="font-size: 0.74rem; color: var(--text-secondary); text-align: center; margin-top: 10px; line-height: 1.4;">
+          <i class="bi bi-whatsapp" style="color: #25D366;"></i> Pesanan langsung terhubung ke WhatsApp Admin dan resi cetak akan diterbitkan.
+        </div>
+      </div>
+
+    </div>
+  </form>
+</div>
+
+<script>
+  function togglePickupBranch(method) {
+    const pickupGroup = document.getElementById('pickup_branch_group');
+    const addressGroup = document.getElementById('address_group');
+    const addressInput = addressGroup.querySelector('textarea');
+    
+    if (method === 'Ambil di Toko') {
+      pickupGroup.style.display = 'block';
+      addressGroup.style.display = 'none';
+      addressInput.removeAttribute('required');
+    } else {
+      pickupGroup.style.display = 'none';
+      addressGroup.style.display = 'block';
+      addressInput.setAttribute('required', 'required');
+    }
+  }
+
+  function selectPayment(method) {
+    const qrisRadio = document.getElementById('pay_qris');
+    const bankRadio = document.getElementById('pay_bank');
+    const qrisDetails = document.getElementById('qris_details');
+    const bankDetails = document.getElementById('bank_details');
+
+    if (method === 'QRIS') {
+      qrisRadio.checked = true;
+      qrisDetails.style.display = 'block';
+      bankDetails.style.display = 'none';
+    } else {
+      bankRadio.checked = true;
+      qrisDetails.style.display = 'none';
+      bankDetails.style.display = 'block';
+    }
+  }
+
+  function copyToClipboard(text, label) {
+    navigator.clipboard.writeText(text).then(() => {
+      alert(label + ' berhasil disalin: ' + text);
+    });
+  }
+</script>
+
+<%- include('partials/footer') %>

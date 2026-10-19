@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title><%= typeof title !== 'undefined' ? title : 'Anugrah Cell Ungaran - Pusat HP Original & Bergaransi' %></title>
+  
+  <!-- Google Fonts: Poppins (Bold/ExtraBold), Montserrat (Clean Sans) & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700&family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Bootstrap Icons CDN -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  
+  <!-- Custom Mobile-First CSS -->
+  <link rel="stylesheet" href="/css/style.css">
+  
+  <!-- Gemini AI Sales Chatbot CSS -->
+  <link rel="stylesheet" href="/css/chatbot.css">
+
+  <!-- PWA 1-Click Mobile App Install Meta & Manifest -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0284c7">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Anugrah Cell">
+  <link rel="apple-touch-icon" href="/images/app-icon-192.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/images/app-icon-192.png">
+</head>
+<body>
+
+  <!-- 9:16 Mobile Phone App Container -->
+  <div class="app-screen-container">
+
+    <!-- 1-Click Mobile App Install Top Banner -->
+    <div id="pwaInstallBanner" class="pwa-install-banner">
+      <div class="pwa-banner-left">
+        <img src="/images/app-icon-192.png" alt="App Icon" class="pwa-banner-icon">
+        <div class="pwa-banner-text">
+          <div class="pwa-banner-title">Aplikasi Anugrah Cell</div>
+          <div class="pwa-banner-sub">Instal di HP &bull; 1-Klik Cepat & Hemat Kuota</div>
+        </div>
+      </div>
+      <div class="pwa-banner-actions">
+        <button type="button" class="pwa-btn-install-now" onclick="triggerPwaInstall()">
+          <i class="bi bi-download"></i> Instal
+        </button>
+        <button type="button" class="pwa-btn-close" onclick="dismissPwaBanner()" aria-label="Tutup">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile-First App Header (Matching Recommendation Mockup) -->
+    <header class="app-header">
+      <div class="container">
+        <div class="app-header-top">
+          <!-- Brand Logo & Branch Indicator -->
+          <a href="/" class="app-brand">
+            <img src="/images/logo-anugrah.png" alt="Anugrah Cell Ungaran" class="app-brand-logo-img">
+            <div class="app-brand-info">
+              <div class="app-brand-name">
+                <span class="brand-anugrah">Anugrah</span>
+                <span class="brand-cell-text">Cell</span>
+              </div>
+              <div class="app-brand-location">
+                <i class="bi bi-geo-alt-fill" style="color: #0284c7;"></i> Harjosari &bull; 3 Cabang
+              </div>
+            </div>
+          </a>
+
+          <!-- Desktop Nav Links -->
+          <nav class="desktop-nav">
+            <a href="/" class="<%= typeof activePage !== 'undefined' && activePage === 'home' ? 'active' : '' %>">Beranda</a>
+            <a href="/katalog" class="<%= typeof activePage !== 'undefined' && activePage === 'katalog' ? 'active' : '' %>">Katalog Ponsel</a>
+            <a href="/#cabang">3 Cabang Toko</a>
+            <a href="/pesanan-saya">Lacak Pesanan</a>
+          </nav>
+
+          <!-- Header Action Area: Install App + WhatsApp + Masuk + Daftar -->
+          <div class="app-header-actions">
+            <!-- 1-Click Install App Quick Button -->
+            <button type="button" id="headerInstallBtn" class="header-install-btn" onclick="triggerPwaInstall()" title="Instal Aplikasi ke Layar Utama HP">
+              <i class="bi bi-phone-fill"></i>
+              <span>Aplikasi</span>
+            </button>
+
+            <!-- WhatsApp Quick Action -->
+            <a href="https://wa.me/<%= (settings.whatsapp_admin || '6281532128996').replace(/\D/g, '') %>?text=Halo%20Admin%20Anugrah%20Cell%20Ungaran..." 
+               target="_blank" 
+               class="header-wa-btn" 
+               title="Chat WhatsApp Admin">
+              <i class="bi bi-whatsapp"></i>
+            </a>
+
+            <% if (currentUser) { %>
+              <!-- Logged-in User Profile Button -->
+              <a href="/akun" class="header-btn-user" title="Akun Saya: <%= currentUser.name %>">
+                <i class="bi bi-person-check-fill" style="color: #0284c7;"></i>
+                <span><%= currentUser.name.split(' ')[0] %></span>
+              </a>
+            <% } else { %>
+              <!-- Masuk Button (Outlined Blue Pill) -->
+              <a href="/login" class="header-btn-login" title="Masuk ke Akun">
+                <i class="bi bi-box-arrow-in-right"></i>
+                <span>Masuk</span>
+              </a>
+
+              <!-- Daftar Button (Solid Blue Pill) -->
+              <a href="/daftar" class="header-btn-register" title="Daftar Akun Baru">
+                <i class="bi bi-person-fill"></i>
+                <span>Daftar</span>
+              </a>
+            <% } %>
+          </div>
+        </div>
+
+        <!-- Quick Search Bar (Pill with Search Icon) -->
+        <div class="search-bar-wrap">
+          <form action="/katalog" method="GET" class="search-bar-box">
+            <i class="bi bi-search" style="color: #64748b; font-size: 0.95rem;"></i>
+            <input type="text" name="search" class="search-bar-input" placeholder="Cari iPhone, Samsung, Xiaomi, OPPO..." value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>">
+          </form>
+        </div>
+      </div>
+    </header>
+
+    <!-- Mobile Bottom App Bar (4-Tab Exact Match to Mockup) -->
+    <nav class="mobile-bottom-nav">
+      <a href="/" class="bottom-nav-item <%= typeof activePage !== 'undefined' && activePage === 'home' ? 'active' : '' %>">
+        <i class="bi bi-house-door<%= typeof activePage !== 'undefined' && activePage === 'home' ? '-fill' : '' %>"></i>
+        <span>Beranda</span>
+      </a>
+
+      <a href="/katalog" class="bottom-nav-item <%= typeof activePage !== 'undefined' && activePage === 'katalog' ? 'active' : '' %>">
+        <i class="bi bi-grid<%= typeof activePage !== 'undefined' && activePage === 'katalog' ? '-fill' : '' %>"></i>
+        <span>Kategori</span>
+      </a>
+
+      <a href="/pesanan-saya" class="bottom-nav-item <%= typeof activePage !== 'undefined' && activePage === 'orders' ? 'active' : '' %>">
+        <i class="bi bi-receipt"></i>
+        <span>Pesanan</span>
+      </a>
+
+      <% if (currentUser) { %>
+        <a href="/akun" class="bottom-nav-item <%= typeof activePage !== 'undefined' && activePage === 'account' ? 'active' : '' %>">
+          <i class="bi bi-person-circle"></i>
+          <span>Akun</span>
+        </a>
+      <% } else { %>
+        <a href="/login" class="bottom-nav-item <%= typeof activePage !== 'undefined' && (activePage === 'login' || activePage === 'register') ? 'active' : '' %>">
+          <i class="bi bi-person"></i>
+          <span>Akun</span>
+        </a>
+      <% } %>
+    </nav>
+
+    <main class="main-content">

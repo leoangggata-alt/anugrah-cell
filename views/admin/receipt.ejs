@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resi Pengiriman #<%= order.id %> - Anugrah Cell Ungaran</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="/css/admin.css">
+
+  <style>
+    body {
+      background: #e2e8f0;
+      color: #111827;
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      padding: 20px;
+    }
+    .print-bar {
+      max-width: 680px;
+      margin: 0 auto 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #0f172a;
+      color: #fff;
+      padding: 14px 20px;
+      border-radius: 8px;
+    }
+    .receipt-sheet {
+      max-width: 680px;
+      margin: 0 auto;
+      background: #fff;
+      border: 2px dashed #000;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      border-radius: 4px;
+    }
+    .barcode-display {
+      font-family: 'Space Mono', monospace;
+      font-size: 1.5rem;
+      letter-spacing: 5px;
+      font-weight: 700;
+      background: #000;
+      color: #fff;
+      padding: 8px 16px;
+      display: inline-block;
+      border-radius: 4px;
+    }
+
+    @media print {
+      body {
+        background: #fff !important;
+        padding: 0 !important;
+      }
+      .print-bar {
+        display: none !important;
+      }
+      .receipt-sheet {
+        box-shadow: none !important;
+        border: 2px solid #000 !important;
+        padding: 20px !important;
+        max-width: 100% !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Action Bar (Hidden on print) -->
+  <div class="print-bar">
+    <div>
+      <strong>Cetak Resi & Invoice Pesanan</strong> (<%= order.id %>)
+    </div>
+    <div style="display: flex; gap: 10px;">
+      <button onclick="window.print()" class="btn btn-gold btn-sm" style="background: #f59e0b; color: #000; font-weight: 700; padding: 8px 18px; border-radius: 6px; border: none; cursor: pointer;">
+        <i class="bi bi-printer-fill"></i> Cetak / Print Sekarang
+      </button>
+      <button onclick="window.close()" style="background: #334155; color: #fff; padding: 8px 14px; border-radius: 6px; border: none; cursor: pointer;">
+        Tutup
+      </button>
+    </div>
+  </div>
+
+  <!-- Printable Shipping Label / Resi Sheet -->
+  <div class="receipt-sheet">
+    
+    <!-- Header -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #000; padding-bottom: 14px; margin-bottom: 16px;">
+      <div>
+        <h1 style="font-size: 1.6rem; font-weight: 900; margin: 0; text-transform: uppercase; letter-spacing: -0.5px;">
+          <%= settings.store_name || 'ANUGRAH CELL UNGARAN' %>
+        </h1>
+        <div style="font-size: 0.85rem; font-weight: 600; color: #4b5563; margin-top: 4px;">
+          Pusat Smartphone Harjosari &bull; 3 Cabang Kab. Semarang
+        </div>
+        <div style="font-size: 0.8rem; color: #6b7280;">
+          WA Admin: +<%= settings.whatsapp_admin || '6281532128996' %>
+        </div>
+      </div>
+
+      <div style="text-align: right;">
+        <div style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: #6b7280;">Layanan Pengiriman:</div>
+        <div style="font-size: 1.15rem; font-weight: 900; color: #000;"><%= order.shipping_courier || 'KURIR TOKO ANUGRAH' %></div>
+        <div style="font-size: 0.8rem; color: #4b5563;"><%= order.shipping_method %></div>
+      </div>
+    </div>
+
+    <!-- Tracking Number & Barcode -->
+    <div style="background: #f3f4f6; border: 1px solid #d1d5db; padding: 14px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+      <div>
+        <div style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: #6b7280; margin-bottom: 4px;">NOMOR RESI PENGIRIMAN:</div>
+        <div class="barcode-display">
+          <%= order.tracking_number || order.id %>
+        </div>
+        <div style="font-size: 0.78rem; color: #4b5563; margin-top: 4px;">ID Transaksi: <strong><%= order.id %></strong> &bull; Tgl: <%= formatDate(order.created_at) %></div>
+      </div>
+
+      <!-- QR Code -->
+      <div>
+        <img src="<%= qrDataUrl %>" alt="QR Code Resi" style="width: 100px; height: 100px; display: block;">
+      </div>
+    </div>
+
+    <!-- Sender & Receiver Addresses Grid -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; border-bottom: 2px solid #000; padding-bottom: 16px; margin-bottom: 18px;">
+      
+      <!-- Pengirim -->
+      <div style="border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; background: #fafafa;">
+        <div style="font-size: 0.75rem; text-transform: uppercase; font-weight: 800; color: #4b5563; border-bottom: 1px dashed #d1d5db; padding-bottom: 4px; margin-bottom: 6px;">
+          PENGIRIM (DARI):
+        </div>
+        <div style="font-weight: 800; font-size: 0.95rem; color: #000;">ANUGRAH CELL UNGARAN (Pusat Harjosari)</div>
+        <div style="font-size: 0.82rem; color: #374151; margin-top: 4px;">
+          Jl. Raya Harjosari No. 88, Kec. Bawen / Ungaran, Kabupaten Semarang, Jawa Tengah
+        </div>
+        <div style="font-size: 0.82rem; font-weight: 700; margin-top: 6px;">
+          Telp/WA: +<%= settings.whatsapp_admin || '6281532128996' %>
+        </div>
+      </div>
+
+      <!-- Penerima -->
+      <div style="border: 2px solid #000; border-radius: 6px; padding: 12px; background: #fff;">
+        <div style="font-size: 0.75rem; text-transform: uppercase; font-weight: 800; color: #000; border-bottom: 1px dashed #9ca3af; padding-bottom: 4px; margin-bottom: 6px;">
+          PENERIMA (TUJUAN):
+        </div>
+        <div style="font-weight: 900; font-size: 1.05rem; color: #000;"><%= order.customer_name %></div>
+        <div style="font-size: 0.95rem; font-weight: 800; color: #000; margin-top: 2px;">
+          Telp/WA: <%= order.customer_phone %>
+        </div>
+        <div style="font-size: 0.85rem; color: #111827; margin-top: 6px; line-height: 1.4;">
+          <%= order.shipping_method === 'Ambil di Toko' ? 'AMBIL DI CABANG: ' + order.pickup_branch : order.shipping_address %>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Items Table -->
+    <div style="margin-bottom: 18px;">
+      <div style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase; margin-bottom: 8px;">
+        ISI PAKET / DETAIL UNIT SMARTPHONE:
+      </div>
+      <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+        <thead>
+          <tr style="border-bottom: 1px solid #000; border-top: 1px solid #000; background: #f3f4f6;">
+            <th style="padding: 6px 8px; text-align: left;">No</th>
+            <th style="padding: 6px 8px; text-align: left;">Nama Smartphone & Kelengkapan</th>
+            <th style="padding: 6px 8px; text-align: center;">Qty</th>
+            <th style="padding: 6px 8px; text-align: right;">Harga Satuan</th>
+            <th style="padding: 6px 8px; text-align: right;">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% items.forEach((it, idx) => { %>
+            <tr style="border-bottom: 1px dashed #d1d5db;">
+              <td style="padding: 8px;"><%= idx + 1 %></td>
+              <td style="padding: 8px;">
+                <strong><%= it.product_name %></strong>
+                <div style="font-size: 0.75rem; color: #6b7280;">Garansi Resmi &bull; Unit Baru Segel</div>
+              </td>
+              <td style="padding: 8px; text-align: center;"><%= it.quantity %></td>
+              <td style="padding: 8px; text-align: right;"><%= formatRupiah(it.price) %></td>
+              <td style="padding: 8px; text-align: right; font-weight: 700;"><%= formatRupiah(it.subtotal) %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Summary & Signatures -->
+    <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 20px; align-items: flex-end; border-top: 2px solid #000; padding-top: 15px;">
+      
+      <div>
+        <div style="font-size: 0.82rem; margin-bottom: 4px;">
+          <strong>Metode Pembayaran:</strong> <%= order.payment_method %>
+        </div>
+        <div style="font-size: 0.82rem; margin-bottom: 4px;">
+          <strong>Status Pembayaran:</strong> <span style="font-weight: 800;"><%= order.status %></span>
+        </div>
+        <% if (order.notes) { %>
+          <div style="font-size: 0.8rem; background: #fef3c7; border: 1px solid #fde68a; padding: 6px 10px; border-radius: 4px; margin-top: 6px;">
+            <strong>Catatan:</strong> <%= order.notes %>
+          </div>
+        <% } %>
+      </div>
+
+      <div style="text-align: right;">
+        <div style="font-size: 0.85rem; color: #4b5563;">TOTAL TAGIHAN</div>
+        <div style="font-size: 1.5rem; font-weight: 900; color: #000;">
+          <%= formatRupiah(order.total_amount) %>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Signatures section -->
+    <div style="display: flex; justify-content: space-between; margin-top: 35px; padding-top: 15px; border-top: 1px dashed #9ca3af; font-size: 0.8rem; text-align: center;">
+      <div>
+        Petugas Ekspedisi / Kurir
+        <div style="height: 50px;"></div>
+        ( ___________________ )
+      </div>
+      <div>
+        Penerima / Customer
+        <div style="height: 50px;"></div>
+        ( <strong><%= order.customer_name %></strong> )
+      </div>
+      <div>
+        Pengirim / Admin Anugrah Cell
+        <div style="height: 50px;"></div>
+        ( <strong>Staf Harjosari</strong> )
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 20px; font-size: 0.72rem; color: #9ca3af;">
+      Dicetak secara otomatis melalui Sistem Panel Admin Anugrah Cell Ungaran pada <%= formatDate(new Date()) %>
+    </div>
+
+  </div>
+
+</body>
+</html>

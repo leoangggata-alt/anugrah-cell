@@ -1,0 +1,155 @@
+<%- include('partials/header', { activePage: 'katalog' }) %>
+
+<div class="container" style="padding-top: 14px; padding-bottom: 24px;">
+  <!-- Title & Breadcrumb -->
+  <div style="margin-bottom: 14px;">
+    <div style="font-size: 0.72rem; color: #64748b; margin-bottom: 4px; font-family: var(--font-montserrat);">
+      <a href="/" style="color: #0284c7; font-weight: 700;">Beranda</a> / <span style="color: #0f172a; font-weight: 600;">Katalog Ponsel</span>
+    </div>
+    <h1 style="font-size: 1.35rem; font-weight: 900; font-family: var(--font-poppins); color: #0f172a; margin: 0; letter-spacing: -0.4px;">
+      Katalog Ponsel <span class="brand-anugrah" style="font-size: 1.35rem;">Original</span>
+    </h1>
+    <div style="font-size: 0.75rem; color: #64748b; margin-top: 2px; font-family: var(--font-montserrat);">
+      Menampilkan <%= products.length %> pilihan smartphone baru & second mulus bergaransi resmi
+    </div>
+  </div>
+
+  <!-- Filter & Search Controls Bar -->
+  <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 12px; margin-bottom: 16px; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);">
+    <form action="/katalog" method="GET" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+      
+      <!-- Search Input -->
+      <div style="grid-column: 1 / -1;">
+        <label class="form-label" style="font-size: 0.72rem; margin-bottom: 4px; font-weight: 700; color: #0f172a;">Cari Smartphone</label>
+        <input type="text" name="search" class="form-control" style="padding: 8px 12px; font-size: 0.82rem; border-radius: 10px;" placeholder="Cari iPhone, Samsung, Xiaomi..." value="<%= searchQuery %>">
+      </div>
+
+      <!-- Brand Selector -->
+      <div>
+        <label class="form-label" style="font-size: 0.72rem; margin-bottom: 4px; font-weight: 700; color: #0f172a;">Brand</label>
+        <select name="brand" class="form-control" style="padding: 7px 10px; font-size: 0.78rem; border-radius: 10px;">
+          <option value="Semua" <%= selectedBrand === 'Semua' ? 'selected' : '' %>>Semua Brand</option>
+          <% brands.forEach(b => { %>
+            <option value="<%= b %>" <%= selectedBrand === b ? 'selected' : '' %>><%= b %></option>
+          <% }) %>
+        </select>
+      </div>
+
+      <!-- Category Selector -->
+      <div>
+        <label class="form-label" style="font-size: 0.72rem; margin-bottom: 4px; font-weight: 700; color: #0f172a;">Kategori</label>
+        <select name="category" class="form-control" style="padding: 7px 10px; font-size: 0.78rem; border-radius: 10px;">
+          <option value="Semua" <%= selectedCategory === 'Semua' ? 'selected' : '' %>>Semua Kategori</option>
+          <% categories.forEach(cat => { %>
+            <option value="<%= cat %>" <%= selectedCategory === cat ? 'selected' : '' %>><%= cat %></option>
+          <% }) %>
+        </select>
+      </div>
+
+      <!-- Sort -->
+      <div>
+        <label class="form-label" style="font-size: 0.72rem; margin-bottom: 4px; font-weight: 700; color: #0f172a;">Urutkan</label>
+        <select name="sort" class="form-control" style="padding: 7px 10px; font-size: 0.78rem; border-radius: 10px;">
+          <option value="terbaru" <%= selectedSort === 'terbaru' ? 'selected' : '' %>>Terbaru</option>
+          <option value="termurah" <%= selectedSort === 'termurah' ? 'selected' : '' %>>Termurah</option>
+          <option value="termahal" <%= selectedSort === 'termahal' ? 'selected' : '' %>>Termahal</option>
+        </select>
+      </div>
+
+      <!-- Submit Button -->
+      <div style="display: flex; align-items: flex-end;">
+        <button type="submit" class="btn btn-mockup-buy" style="width: 100%; height: 36px; padding: 0; font-size: 0.78rem;">
+          <i class="bi bi-funnel-fill"></i> Terapkan
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Active Filters Feedback -->
+  <% if (searchQuery || (selectedBrand && selectedBrand !== 'Semua') || (selectedCategory && selectedCategory !== 'Semua')) { %>
+    <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 14px; flex-wrap: wrap;">
+      <span style="font-size: 0.72rem; color: #64748b;">Filter aktif:</span>
+      <% if (searchQuery) { %>
+        <span class="product-badge-corner badge-blue" style="position: static; font-size: 0.65rem;">"<%= searchQuery %>"</span>
+      <% } %>
+      <% if (selectedBrand !== 'Semua') { %>
+        <span class="product-badge-corner badge-orange" style="position: static; font-size: 0.65rem;"><%= selectedBrand %></span>
+      <% } %>
+      <% if (selectedCategory !== 'Semua') { %>
+        <span class="product-badge-corner badge-green" style="position: static; font-size: 0.65rem;"><%= selectedCategory %></span>
+      <% } %>
+      <a href="/katalog" style="font-size: 0.72rem; color: #ef4444; font-weight: 700; margin-left: 4px;">Reset</a>
+    </div>
+  <% } %>
+
+  <!-- Products Grid (2 columns on mobile with Premium Cards) -->
+  <% if (products.length === 0) { %>
+    <div style="text-align: center; padding: 40px 16px; background: #ffffff; border-radius: 16px; border: 1.5px dashed #cbd5e1; margin-top: 10px;">
+      <i class="bi bi-search" style="font-size: 2.2rem; color: #94a3b8; display: block; margin-bottom: 10px;"></i>
+      <h3 style="font-size: 1.05rem; color: #0f172a; margin-bottom: 4px; font-weight: 800; font-family: var(--font-poppins);">Ponsel Tidak Ditemukan</h3>
+      <p style="color: #64748b; font-size: 0.8rem; margin-bottom: 14px; font-family: var(--font-montserrat);">Coba gunakan kata kunci lain atau ubah filter brand.</p>
+      <a href="/katalog" class="btn btn-mockup-buy" style="display: inline-flex; width: auto;">Lihat Semua Ponsel</a>
+    </div>
+  <% } else { %>
+    <div class="products-grid-mobile">
+      <% products.forEach((product, idx) => { 
+        const badgeColors = ['badge-red', 'badge-blue', 'badge-orange', 'badge-green'];
+        const badgeClass = badgeColors[idx % badgeColors.length];
+        const badgeLabel = product.stock <= 3 ? 'Stok Terbatas' : (product.category === 'Second Mulus' ? 'Second Mulus' : (product.is_featured ? 'Terlaris' : 'Ready Stok'));
+      %>
+        <div class="mockup-product-card">
+          <!-- Top Tag Badge -->
+          <div class="product-badge-corner <%= badgeClass %>">
+            <%= badgeLabel %>
+          </div>
+
+          <!-- Product Image Centered -->
+          <div class="mockup-img-wrap">
+            <img src="<%= product.image %>" alt="<%= product.name %>" loading="lazy">
+          </div>
+
+          <!-- Product Card Body -->
+          <div class="mockup-card-body">
+            <a href="/produk/<%= product.id %>" class="mockup-product-title" title="<%= product.name %>">
+              <%= product.name %>
+            </a>
+
+            <!-- Specs line -->
+            <div class="mockup-product-specs">
+              <% if (product.ram && product.storage) { %>
+                <%= product.ram %> | <%= product.storage %>
+              <% } else if (product.storage) { %>
+                <%= product.storage %>
+              <% } else { %>
+                <%= product.category %>
+              <% } %>
+            </div>
+
+            <!-- Price Wrap with 'Mulai dari' / original price -->
+            <div class="mockup-price-wrap">
+              <% if (product.original_price && product.original_price > product.price) { %>
+                <div style="font-size: 0.62rem; color: #94a3b8; text-decoration: line-through;"><%= formatRupiah(product.original_price) %></div>
+              <% } else { %>
+                <span class="mockup-price-label">Harga Spesial</span>
+              <% } %>
+              <div class="mockup-price-value"><%= formatRupiah(product.price) %></div>
+            </div>
+
+            <!-- Action Buttons Row (Detail & Beli) -->
+            <div style="display: flex; gap: 6px; margin-top: 6px;">
+              <a href="/produk/<%= product.id %>" class="btn-card-detail">
+                Detail
+              </a>
+              <a href="/beli-langsung/<%= product.id %>" class="btn-mockup-buy" style="flex: 1; padding: 6px 8px; font-size: 0.74rem;">
+                <i class="bi bi-lightning-charge-fill"></i> Beli
+              </a>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+
+</div>
+
+<%- include('partials/footer') %>

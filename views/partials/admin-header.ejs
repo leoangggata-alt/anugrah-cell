@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= typeof title !== 'undefined' ? title : 'Panel Admin - Anugrah Cell Ungaran' %></title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="admin-body">
+
+  <div class="admin-layout">
+    <!-- Admin Sidebar Navigation -->
+    <aside class="admin-sidebar">
+      <div class="sidebar-header">
+        <div class="logo-icon" style="width: 38px; height: 38px; font-size: 1.1rem;">
+          <i class="bi bi-shield-lock-fill"></i>
+        </div>
+        <div class="sidebar-logo">
+          ANUGRAH CELL
+          <span>PANEL ADMINISTRATOR</span>
+        </div>
+      </div>
+
+      <ul class="sidebar-nav">
+        <li>
+          <a href="/admin" class="sidebar-link <%= typeof activeNav !== 'undefined' && activeNav === 'dashboard' ? 'active' : '' %>">
+            <i class="bi bi-speedometer2"></i> Dashboard
+          </a>
+        </li>
+        <li>
+          <a href="/admin/pesanan" class="sidebar-link <%= typeof activeNav !== 'undefined' && activeNav === 'orders' ? 'active' : '' %>">
+            <i class="bi bi-receipt"></i> Pesanan & Resi
+          </a>
+        </li>
+        <li>
+          <a href="/admin/produk" class="sidebar-link <%= typeof activeNav !== 'undefined' && activeNav === 'products' ? 'active' : '' %>">
+            <i class="bi bi-phone"></i> Katalog Ponsel
+          </a>
+        </li>
+        <li>
+          <a href="/admin/pengaturan" class="sidebar-link <%= typeof activeNav !== 'undefined' && activeNav === 'settings' ? 'active' : '' %>">
+            <i class="bi bi-gear-fill"></i> Pengaturan Toko & WA
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <a href="/" target="_blank" class="btn btn-dark btn-sm" style="width: 100%; margin-bottom: 8px;">
+          <i class="bi bi-box-arrow-up-right"></i> Buka Layar Depan
+        </a>
+        <a href="/logout" class="btn btn-outline-gold btn-sm" style="width: 100%; color: #ef4444; border-color: rgba(239, 68, 68, 0.4);">
+          <i class="bi bi-box-arrow-right"></i> Keluar
+        </a>
+      </div>
+    </aside>
+
+    <!-- Admin Main Body -->
+    <main class="admin-main">

@@ -1,0 +1,72 @@
+<%- include('partials/header') %>
+
+<div class="container" style="padding-top: 14px; padding-bottom: 40px;">
+  <div class="success-box">
+    <div class="success-icon">
+      <i class="bi bi-check-lg"></i>
+    </div>
+
+    <div class="neon-pill-tag green" style="font-size: 0.76rem; margin-bottom: 8px;">
+      PESANAN BERHASIL DIBUAT
+    </div>
+
+    <h1 style="font-size: 1.35rem; font-weight: 900; color: var(--text-main); margin-bottom: 4px; letter-spacing: -0.3px;">
+      Terima Kasih Atas Pesanan Anda!
+    </h1>
+    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 18px;">
+      Nomor Pesanan: <strong style="color: #0284c7;"><%= order.id %></strong>
+    </p>
+
+    <!-- WhatsApp Admin Connect Box (Vibrant Green Glow) -->
+    <div style="background: #f0fdf4; border: 2px solid #86efac; border-radius: var(--radius-md); padding: 18px 16px; margin-bottom: 20px; box-shadow: 0 4px 16px rgba(34, 197, 94, 0.15);">
+      <i class="bi bi-whatsapp" style="font-size: 2.2rem; color: #16a34a; display: block; margin-bottom: 8px;"></i>
+      <h3 style="font-size: 1.05rem; font-weight: 800; color: #14532d; margin-bottom: 6px;">
+        Hubungkan ke WhatsApp Admin Sekarang
+      </h3>
+      <p style="color: #166534; font-size: 0.8rem; margin-bottom: 14px; line-height: 1.45;">
+        Kirim rincian pesanan dan bukti bayar ke WhatsApp Admin Anugrah Cell agar pesanan Anda segera dipacking dan nomor resi cetak diterbitkan.
+      </p>
+
+      <a href="<%= waLink %>" target="_blank" class="btn btn-whatsapp" style="width: 100%; font-size: 0.92rem; padding: 11px;">
+        <i class="bi bi-whatsapp" style="font-size: 1.15rem;"></i> Kirim ke WhatsApp Admin
+      </a>
+    </div>
+
+    <!-- Order Items Summary -->
+    <div style="text-align: left; background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: var(--radius-md); padding: 16px; margin-bottom: 20px;">
+      <h4 style="font-size: 0.92rem; font-weight: 800; color: var(--text-main); margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">
+        Rincian Pesanan
+      </h4>
+
+      <% items.forEach(item => { %>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.84rem; color: var(--text-main);">
+          <span><%= item.product_name %> (x<%= item.quantity %>)</span>
+          <strong><%= formatRupiah(item.subtotal) %></strong>
+        </div>
+      <% }) %>
+
+      <div style="border-top: 1px dashed #cbd5e1; padding-top: 10px; margin-top: 10px; display: flex; justify-content: space-between; font-size: 1.05rem; font-weight: 900;">
+        <span>Total Tagihan:</span>
+        <span style="color: #0284c7;"><%= formatRupiah(order.total_amount) %></span>
+      </div>
+
+      <div style="margin-top: 12px; font-size: 0.78rem; color: var(--text-secondary); border-top: 1px solid #f1f5f9; padding-top: 10px; line-height: 1.6;">
+        <div><strong>Metode Bayar:</strong> <%= order.payment_method %></div>
+        <div><strong>Pengiriman:</strong> <%= order.shipping_method %> (<%= order.shipping_method === 'Ambil di Toko' ? order.pickup_branch : order.shipping_address %>)</div>
+        <div><strong>Status:</strong> <span style="color: #d97706; font-weight: 800;"><%= order.status %></span></div>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 8px;">
+      <a href="/pesanan-saya" class="btn btn-neon-outline" style="flex: 1; padding: 10px;">
+        <i class="bi bi-receipt"></i> Cek Pesanan
+      </a>
+      <a href="/katalog" class="btn btn-neon-primary" style="flex: 1; padding: 10px;">
+        <i class="bi bi-grid-fill"></i> Lanjut Belanja
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<%- include('partials/footer') %>

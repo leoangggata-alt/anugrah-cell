@@ -1,0 +1,183 @@
+<%- include('partials/header') %>
+
+<div class="container" style="padding-top: 14px; padding-bottom: 30px;">
+  <!-- Breadcrumb -->
+  <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 12px;">
+    <a href="/" style="color: var(--neon-cyan); font-weight: 600;">Beranda</a> / 
+    <a href="/katalog" style="color: var(--text-secondary);">Katalog</a> / 
+    <a href="/katalog?brand=<%= product.brand %>" style="color: var(--text-secondary);"><%= product.brand %></a> / 
+    <span style="color: #0284c7; font-weight: 700;"><%= product.name %></span>
+  </div>
+
+  <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: var(--radius-lg); padding: 18px; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05); margin-bottom: 24px;">
+    
+    <!-- Phone Image Showcase (Square Contain with Neon Accent) -->
+    <div style="border-radius: var(--radius-md); overflow: hidden; background: #ffffff; border: 1.5px solid #e2e8f0; margin-bottom: 16px; position: relative; padding: 16px; display: flex; align-items: center; justify-content: center; min-height: 260px;">
+      <img src="<%= product.image %>" alt="<%= product.name %>" style="max-height: 250px; max-width: 100%; object-fit: contain; margin: 0 auto;">
+      <span class="card-brand-tag" style="top: 12px; left: 12px;"><%= product.brand %></span>
+      <span class="card-stock-tag" style="bottom: 12px; right: 12px;">
+        <span class="neon-stock-dot"></span> Stok <%= product.stock %>
+      </span>
+    </div>
+
+    <!-- Product Details -->
+    <div>
+      <div style="font-size: 0.72rem; font-weight: 800; color: #7c3aed; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
+        <%= product.category %>
+      </div>
+      <h1 style="font-size: 1.35rem; font-weight: 900; color: var(--text-main); line-height: 1.25; margin-bottom: 10px; letter-spacing: -0.3px;">
+        <%= product.name %>
+      </h1>
+
+      <div style="margin-bottom: 16px;">
+        <% if (product.original_price && product.original_price > product.price) { %>
+          <div class="card-original-price" style="font-size: 0.82rem;"><%= formatRupiah(product.original_price) %></div>
+        <% } %>
+        <div style="font-size: 1.6rem; font-weight: 900; color: #0284c7; line-height: 1.1; letter-spacing: -0.4px;">
+          <%= formatRupiah(product.price) %>
+        </div>
+      </div>
+
+      <!-- Warranty Badge (Neon Glowing Style) -->
+      <div style="background: linear-gradient(135deg, #ecfeff 0%, #faf5ff 100%); border: 1.5px solid #a5f3fc; border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 18px; display: flex; align-items: center; gap: 10px; box-shadow: 0 2px 8px rgba(0, 212, 255, 0.1);">
+        <i class="bi bi-shield-check" style="font-size: 1.4rem; color: #0284c7;"></i>
+        <div>
+          <strong style="color: #0369a1; font-size: 0.85rem;"><%= product.warranty || 'Garansi Resmi 1 Tahun' %></strong>
+          <div style="font-size: 0.74rem; color: #475569;">100% Produk Original, Tersegel & Terverifikasi</div>
+        </div>
+      </div>
+
+      <p style="color: var(--text-secondary); font-size: 0.86rem; line-height: 1.55; margin-bottom: 20px;">
+        <%= product.description || 'Ponsel original bergaransi resmi dengan performa andal, kamera jernih, dan baterai tahan lama.' %>
+      </p>
+
+      <!-- Direct Buy Action Form -->
+      <form action="/beli-langsung" method="POST" style="margin-bottom: 25px;">
+        <input type="hidden" name="productId" value="<%= product.id %>">
+        
+        <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 14px;">
+          <span style="font-size: 0.84rem; font-weight: 700; color: var(--text-secondary);">Jumlah:</span>
+          <input type="number" name="quantity" value="1" min="1" max="<%= product.stock %>" class="form-control" style="width: 80px; text-align: center; padding: 6px; font-weight: 700;">
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+          <button type="submit" class="btn btn-neon-primary" style="flex: 1; padding: 12px 16px; font-size: 0.95rem;">
+            <i class="bi bi-lightning-charge-fill"></i> Beli Sekarang
+          </button>
+          <a href="https://wa.me/<%= (settings.whatsapp_admin || '6281532128996').replace(/\D/g, '') %>?text=Halo%20Admin%20Anugrah%20Cell%20Ungaran,%20apakah%20*<%= encodeURIComponent(product.name) %>*%20masih%20ready?" 
+             target="_blank" 
+             class="btn btn-whatsapp" style="padding: 12px 16px; font-size: 0.92rem;">
+            <i class="bi bi-whatsapp"></i> Chat WA
+          </a>
+        </div>
+      </form>
+
+      <!-- Specifications Table -->
+      <h3 style="font-size: 1.05rem; font-weight: 800; color: var(--text-main); margin-bottom: 12px; border-top: 1px solid #e2e8f0; padding-top: 16px; display: flex; align-items: center; gap: 6px;">
+        <i class="bi bi-cpu-fill" style="color: #7c3aed;"></i> Spesifikasi Teknis
+      </h3>
+
+      <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: var(--radius-sm); overflow: hidden;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.82rem;">
+          <tbody>
+            <% if (product.ram) { %>
+              <tr style="border-bottom: 1px solid #f1f5f9;">
+                <td style="padding: 10px 14px; color: var(--text-muted); font-weight: 600; width: 40%;">RAM</td>
+                <td style="padding: 10px 14px; font-weight: 700; color: var(--text-main);"><%= product.ram %></td>
+              </tr>
+            <% } %>
+            <% if (product.storage) { %>
+              <tr style="border-bottom: 1px solid #f1f5f9;">
+                <td style="padding: 10px 14px; color: var(--text-muted); font-weight: 600;">Memori Internal</td>
+                <td style="padding: 10px 14px; font-weight: 700; color: var(--text-main);"><%= product.storage %></td>
+              </tr>
+            <% } %>
+            <% if (product.chipset) { %>
+              <tr style="border-bottom: 1px solid #f1f5f9;">
+                <td style="padding: 10px 14px; color: var(--text-muted); font-weight: 600;">Prosesor / Chipset</td>
+                <td style="padding: 10px 14px; font-weight: 700; color: var(--text-main);"><%= product.chipset %></td>
+              </tr>
+            <% } %>
+            <% if (product.screen) { %>
+              <tr style="border-bottom: 1px solid #f1f5f9;">
+                <td style="padding: 10px 14px; color: var(--text-muted); font-weight: 600;">Layar</td>
+                <td style="padding: 10px 14px; font-weight: 700; color: var(--text-main);"><%= product.screen %></td>
+              </tr>
+            <% } %>
+            <% if (product.camera) { %>
+              <tr style="border-bottom: 1px solid #f1f5f9;">
+                <td style="padding: 10px 14px; color: var(--text-muted); font-weight: 600;">Kamera</td>
+                <td style="padding: 10px 14px; font-weight: 700; color: var(--text-main);"><%= product.camera %></td>
+              </tr>
+            <% } %>
+            <% if (product.battery) { %>
+              <tr style="border-bottom: 1px solid #f1f5f9;">
+                <td style="padding: 10px 14px; color: var(--text-muted); font-weight: 600;">Baterai</td>
+                <td style="padding: 10px 14px; font-weight: 700; color: var(--text-main);"><%= product.battery %></td>
+              </tr>
+            <% } %>
+            <tr>
+              <td style="padding: 10px 14px; color: var(--text-muted); font-weight: 600;">Garansi</td>
+              <td style="padding: 10px 14px; font-weight: 800; color: #0284c7;"><%= product.warranty %></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Related Products (Mobile Grid with Strict Alignment) -->
+  <% if (relatedProducts && relatedProducts.length > 0) { %>
+    <div style="margin-top: 20px;">
+      <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+        <i class="bi bi-stars" style="color: var(--neon-cyan);"></i> Ponsel Pilihan Serupa
+      </h3>
+      <div class="products-grid-mobile">
+        <% relatedProducts.forEach(rel => { %>
+          <div class="product-app-card">
+            <div class="card-img-wrap">
+              <img src="<%= rel.image %>" alt="<%= rel.name %>" loading="lazy">
+              <span class="card-brand-tag"><%= rel.brand %></span>
+              <span class="card-stock-tag">
+                <span class="neon-stock-dot"></span> Stok <%= rel.stock %>
+              </span>
+            </div>
+            <div class="card-body">
+              <a href="/produk/<%= rel.id %>" class="card-title" title="<%= rel.name %>"><%= rel.name %></a>
+              
+              <div class="card-spec-chips">
+                <% if (rel.ram && rel.storage) { %>
+                  <span class="spec-chip"><%= rel.ram %>/<%= rel.storage %></span>
+                <% } %>
+                <span class="spec-chip"><%= rel.category %></span>
+              </div>
+
+              <div class="card-price-wrap">
+                <% if (rel.original_price && rel.original_price > rel.price) { %>
+                  <div class="card-original-price"><%= formatRupiah(rel.original_price) %></div>
+                <% } else { %>
+                  <div class="card-original-price" style="visibility: hidden;">-</div>
+                <% } %>
+                <div class="card-price"><%= formatRupiah(rel.price) %></div>
+              </div>
+
+              <div class="card-actions-row">
+                <a href="/produk/<%= rel.id %>" class="btn btn-neon-outline btn-sm">
+                  Detail
+                </a>
+                <a href="/beli-langsung/<%= rel.id %>" class="btn btn-neon-primary btn-sm" title="Beli Sekarang Langsung">
+                  <i class="bi bi-lightning-charge-fill"></i> Beli
+                </a>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+  <% } %>
+
+</div>
+
+<%- include('partials/footer') %>

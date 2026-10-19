@@ -1,0 +1,56 @@
+{
+  "id": "/",
+  "name": "Anugrah Cell Ungaran - Pusat HP Resmi",
+  "short_name": "Anugrah Cell",
+  "description": "Aplikasi Resmi Belanja Smartphone Original & Bergaransi Anugrah Cell Harjosari Kab. Semarang",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait",
+  "background_color": "#f8fafc",
+  "theme_color": "#0284c7",
+  "categories": ["shopping", "business", "lifestyle"],
+  "icons": [
+    {
+      "src": "/images/app-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/app-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/images/app-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/app-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Katalog HP",
+      "short_name": "Katalog",
+      "description": "Lihat semua stok HP terbaru",
+      "url": "/katalog",
+      "icons": [{ "src": "/images/app-icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Lacak Pesanan",
+      "short_name": "Pesanan",
+      "description": "Cek status pesanan & cetak resi",
+      "url": "/pesanan-saya",
+      "icons": [{ "src": "/images/app-icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

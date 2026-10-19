@@ -1,0 +1,76 @@
+<!-- Draggable Floating Action Button (FAB) -->
+<div id="chatbot-fab" class="chatbot-fab-container" title="Geser ke mana saja / Klik untuk Chat">
+  <div class="chatbot-fab-btn">
+    <img src="/images/bot-face.jpg" alt="Alika - Konsultan AI" class="chatbot-fab-avatar">
+    <span class="chatbot-fab-dot"></span>
+  </div>
+  <div class="chatbot-fab-badge">
+    <i class="bi bi-stars" style="color: #38bdf8;"></i> Tanya Alika & Promo
+  </div>
+</div>
+
+<!-- Chat Consultation Modal (Layar Kecil Konsultasi) -->
+<div id="chatbot-modal" class="chatbot-modal-overlay">
+  <div class="chatbot-modal-window">
+    <!-- Header -->
+    <div class="chatbot-header">
+      <div class="chatbot-header-left">
+        <div class="chatbot-header-avatar-wrap">
+          <img src="/images/bot-avatar.jpg" alt="Alika" class="chatbot-header-avatar">
+          <span class="chatbot-header-dot"></span>
+        </div>
+        <div class="chatbot-header-info">
+          <div class="chatbot-header-name">
+            <%= (typeof settings !== 'undefined' && settings.bot_name) ? settings.bot_name : 'Alika' %> <i class="bi bi-patch-check-fill" style="color: #38bdf8; font-size: 0.82rem;"></i>
+          </div>
+          <div class="chatbot-header-subtitle">
+            <i class="bi bi-stars"></i> Konsultan HP Anugrah Cell (AI)
+          </div>
+        </div>
+      </div>
+      <div class="chatbot-header-actions">
+        <a href="https://wa.me/<%= (typeof settings !== 'undefined' && settings.whatsapp_admin ? settings.whatsapp_admin : '6281532128996').replace(/\D/g, '') %>?text=Halo%20Admin%20Anugrah%20Cell%20Ungaran,%20saya%20mau%20tanya%20produk%20HP" 
+           target="_blank" 
+           class="chatbot-header-wa-btn" 
+           title="Chat WhatsApp Admin">
+          <i class="bi bi-whatsapp"></i> WA
+        </a>
+        <button type="button" id="chatbot-close-btn" class="chatbot-close-btn" aria-label="Tutup Chat">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Messages Container -->
+    <div id="chatbot-messages" class="chatbot-messages-wrap">
+      <!-- Greeting from Alika -->
+      <div class="chat-msg chat-msg-bot">
+        <div class="chat-bubble">
+          <p>
+            <strong>Halo Kak! Selamat datang di Anugrah Cell Ungaran!</strong> 👋
+          </p>
+          <p>
+            <%= (typeof settings !== 'undefined' && settings.bot_greeting) ? settings.bot_greeting : 'Aku Alika, konsultan belanja pintar. Siap bantu cek spesifikasi HP, rekomendasi sesuai budget, cek stok 3 cabang, hingga pandu pembelian sampai closing!' %>
+          </p>
+          <p style="margin-bottom: 6px; font-weight: 600; color: #0284c7; font-size: 0.74rem;">
+            Pilih topik cepat di bawah atau ketik langsung pertanyaan Kakak:
+          </p>
+          <div class="chat-quick-chips">
+            <button type="button" class="chat-chip" data-query="Rekomendasi HP budget 2-3 jutaan terbaik">💡 Budget 2-3 Juta</button>
+            <button type="button" class="chat-chip" data-query="Ada promo iPhone apa saja yang ready stok?">🍎 Promo iPhone</button>
+            <button type="button" class="chat-chip" data-query="HP Samsung kamera jernih baterai awet">📱 Samsung Favorit</button>
+            <button type="button" class="chat-chip" data-query="Lokasi 3 cabang toko dan nomor WhatsApp admin">📍 Info 3 Cabang & WA</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Input Form -->
+    <form id="chatbot-form" class="chatbot-input-bar">
+      <input type="text" id="chatbot-input" class="chatbot-input-field" placeholder="Tanya spek, budget, stok..." autocomplete="off">
+      <button type="submit" class="chatbot-send-btn" title="Kirim Pesan">
+        <i class="bi bi-send-fill"></i>
+      </button>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,146 @@
+<%- include('../partials/admin-header', { activeNav: 'products' }) %>
+
+<div class="admin-header">
+  <div>
+    <h1 class="admin-title"><%= isEdit ? 'Edit Ponsel' : 'Tambah Ponsel Baru' %></h1>
+    <div class="admin-subtitle">Input data smartphone lengkap agar customer mendapatkan informasi akurat di katalog</div>
+  </div>
+  <div>
+    <a href="/admin/produk" class="btn btn-dark btn-sm">
+      <i class="bi bi-arrow-left"></i> Kembali ke Daftar
+    </a>
+  </div>
+</div>
+
+<div class="admin-card" style="max-width: 860px;">
+  <form action="<%= isEdit ? '/admin/produk/edit/' + product.id : '/admin/produk/tambah' %>" method="POST" enctype="multipart/form-data">
+    
+    <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 20px; color: var(--accent-gold-light);">
+      <i class="bi bi-info-circle-fill"></i> 1. Informasi Utama Produk
+    </h3>
+
+    <div class="form-group">
+      <label class="form-label">Nama Smartphone / Seri Ponsel *</label>
+      <input type="text" name="name" class="form-control" placeholder="Contoh: iPhone 15 Pro 128GB Titanium / Samsung Galaxy S24 Ultra" value="<%= product ? product.name : '' %>" required>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+      <div class="form-group">
+        <label class="form-label">Brand Smartphone *</label>
+        <select name="brand" class="form-control" required>
+          <% const brandsList = ['Apple', 'Samsung', 'Xiaomi', 'OPPO', 'Vivo', 'Infinix', 'Realme', 'Asus ROG', 'Google Pixel']; %>
+          <% brandsList.forEach(b => { %>
+            <option value="<%= b %>" <%= (product && product.brand === b) ? 'selected' : '' %>><%= b %></option>
+          <% }) %>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Kategori Segmen *</label>
+        <select name="category" class="form-control" required>
+          <% const cats = ['Flagship', 'Mid-Range', 'Entry-Level', 'Second Mulus']; %>
+          <% cats.forEach(c => { %>
+            <option value="<%= c %>" <%= (product && product.category === c) ? 'selected' : '' %>><%= c %></option>
+          <% }) %>
+        </select>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+      <div class="form-group">
+        <label class="form-label">Harga Jual (Rp) *</label>
+        <input type="number" name="price" class="form-control" placeholder="18500000" value="<%= product ? product.price : '' %>" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Harga Coret / Asli (Opsional)</label>
+        <input type="number" name="original_price" class="form-control" placeholder="20000000" value="<%= product ? product.original_price || '' : '' %>">
+        <div class="form-hint">Untuk menampilkan diskon</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Stok Tersedia *</label>
+        <input type="number" name="stock" class="form-control" placeholder="10" value="<%= product ? product.stock : 5 %>" required>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Upload Foto Ponsel (File)</label>
+      <input type="file" name="image_file" class="form-control" accept="image/*">
+      <div class="form-hint">Atau masukkan URL gambar langsung di bawah ini:</div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">URL Foto Ponsel (Alternatif jika tidak upload file)</label>
+      <input type="url" name="image_url" class="form-control" placeholder="https://images.unsplash.com/..." value="<%= product ? product.image : '' %>">
+      <% if (product && product.image) { %>
+        <div style="margin-top: 10px;">
+          <img src="<%= product.image %>" alt="Preview" style="max-height: 100px; border-radius: 6px; border: 1px solid var(--border-color);">
+        </div>
+      <% } %>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Deskripsi Lengkap Produk</label>
+      <textarea name="description" class="form-control" rows="3" placeholder="Jelaskan kondisi unit, keunggulan, kelengkapan kotak (fullset/unit only)..."><%= product ? product.description || '' : '' %></textarea>
+    </div>
+
+    <h3 style="font-size: 1.15rem; font-weight: 700; margin-top: 35px; margin-bottom: 20px; color: var(--accent-gold-light);">
+      <i class="bi bi-cpu-fill"></i> 2. Spesifikasi Teknis (Tampil di Detail HP)
+    </h3>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+      <div class="form-group">
+        <label class="form-label">Kapasitas RAM</label>
+        <input type="text" name="ram" class="form-control" placeholder="Contoh: 8 GB (+8GB Extended) / 12 GB" value="<%= product ? product.ram || '' : '' %>">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Penyimpanan Internal (ROM)</label>
+        <input type="text" name="storage" class="form-control" placeholder="Contoh: 128 GB / 256 GB / 512 GB" value="<%= product ? product.storage || '' : '' %>">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Chipset / Prosesor</label>
+        <input type="text" name="chipset" class="form-control" placeholder="Contoh: Snapdragon 8 Gen 3 / Apple A17 Pro" value="<%= product ? product.chipset || '' : '' %>">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Layar Display</label>
+        <input type="text" name="screen" class="form-control" placeholder="Contoh: 6.7 inch AMOLED 120Hz Curved" value="<%= product ? product.screen || '' : '' %>">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Baterai & Pengisian Daya</label>
+        <input type="text" name="battery" class="form-control" placeholder="Contoh: 5000 mAh, 80W Fast Charge" value="<%= product ? product.battery || '' : '' %>">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Kamera Depan & Belakang</label>
+        <input type="text" name="camera" class="form-control" placeholder="Contoh: 200 MP OIS + 50 MP Tele + 12 MP Ultra" value="<%= product ? product.camera || '' : '' %>">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Status Garansi Resmi</label>
+      <input type="text" name="warranty" class="form-control" placeholder="Contoh: Garansi Resmi iBox 1 Tahun / SEIN Indonesia" value="<%= product ? product.warranty : 'Garansi Resmi Indonesia 1 Tahun' %>">
+    </div>
+
+    <div class="form-group" style="margin-top: 20px;">
+      <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+        <input type="checkbox" name="is_featured" value="1" <%= (product && product.is_featured) ? 'checked' : '' %>>
+        <span style="font-weight: 600; color: #fff;">Tampilkan di Pilihan Unggulan Layar Depan (Homepage)</span>
+      </label>
+    </div>
+
+    <div style="display: flex; gap: 15px; margin-top: 35px;">
+      <button type="submit" class="btn btn-gold btn-lg" style="flex: 1;">
+        <i class="bi bi-save-fill"></i> <%= isEdit ? 'Simpan Perubahan' : 'Tambahkan Ponsel ke Katalog' %>
+      </button>
+      <a href="/admin/produk" class="btn btn-dark btn-lg">Batal</a>
+    </div>
+
+  </form>
+</div>
+
+<%- include('../partials/admin-footer') %>

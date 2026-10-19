@@ -1,0 +1,75 @@
+<%- include('partials/header', { activePage: 'account' }) %>
+
+<div class="container" style="padding-top: 14px; padding-bottom: 30px;">
+  <div style="margin-bottom: 14px;">
+    <h1 style="font-size: 1.35rem; font-weight: 900; color: var(--text-main); margin: 0; letter-spacing: -0.3px;">
+      Akun <span class="neon-gradient-text">Saya</span>
+    </h1>
+    <div style="font-size: 0.78rem; color: var(--text-secondary);">Kelola profil & data pengiriman pesanan Anda</div>
+  </div>
+
+  <!-- User Profile Card -->
+  <div class="account-profile-card">
+    <div class="account-avatar">
+      <i class="bi bi-person-fill"></i>
+    </div>
+    <h2 style="font-size: 1.2rem; font-weight: 900; color: var(--text-main); margin-bottom: 4px;">
+      <%= user.name %>
+    </h2>
+    <div style="font-size: 0.8rem; color: #0284c7; font-weight: 700; margin-bottom: 8px;">
+      <i class="bi bi-telephone-fill"></i> <%= user.phone %>
+    </div>
+    <% if (user.email) { %>
+      <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 8px;">
+        <i class="bi bi-envelope"></i> <%= user.email %>
+      </div>
+    <% } %>
+
+    <% if (user.address) { %>
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 12px; font-size: 0.78rem; color: var(--text-secondary); text-align: left; margin-top: 10px;">
+        <strong style="color: var(--text-main); display: block; margin-bottom: 2px;"><i class="bi bi-geo-alt-fill text-gold"></i> Alamat Pengiriman Tersimpan:</strong>
+        <%= user.address %>
+      </div>
+    <% } %>
+  </div>
+
+  <!-- Quick Menu List -->
+  <div class="account-menu-list">
+    <a href="/pesanan-saya" class="account-menu-item">
+      <div style="display: flex; align-items: center;">
+        <i class="bi bi-receipt left-icon"></i>
+        <span>Riwayat Pesanan Saya</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px;">
+        <span class="neon-pill-tag cyan"><%= orderCount %> Pesanan</span>
+        <i class="bi bi-chevron-right" style="color: var(--text-muted); font-size: 0.8rem;"></i>
+      </div>
+    </a>
+
+    <a href="/katalog" class="account-menu-item">
+      <div style="display: flex; align-items: center;">
+        <i class="bi bi-grid-fill left-icon" style="color: #7c3aed;"></i>
+        <span>Katalog Smartphone Lengkap</span>
+      </div>
+      <i class="bi bi-chevron-right" style="color: var(--text-muted); font-size: 0.8rem;"></i>
+    </a>
+
+    <a href="https://wa.me/<%= (settings.whatsapp_admin || '6281532128996').replace(/\D/g, '') %>?text=Halo%20Admin%20Anugrah%20Cell%20Ungaran,%20saya%20<%= encodeURIComponent(user.name) %>..." target="_blank" class="account-menu-item">
+      <div style="display: flex; align-items: center;">
+        <i class="bi bi-whatsapp left-icon" style="color: #16a34a;"></i>
+        <span>Chat WhatsApp Admin Toko</span>
+      </div>
+      <i class="bi bi-chevron-right" style="color: var(--text-muted); font-size: 0.8rem;"></i>
+    </a>
+
+    <a href="/logout" class="account-menu-item" style="border-color: #fecaca; background: #fffbfb;" onclick="return confirm('Apakah Anda yakin ingin keluar dari akun?');">
+      <div style="display: flex; align-items: center; color: #dc2626;">
+        <i class="bi bi-box-arrow-right left-icon" style="color: #dc2626;"></i>
+        <span>Keluar dari Akun (Logout)</span>
+      </div>
+      <i class="bi bi-chevron-right" style="color: #dc2626; font-size: 0.8rem;"></i>
+    </a>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

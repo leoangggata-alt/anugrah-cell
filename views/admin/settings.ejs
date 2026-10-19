@@ -1,0 +1,362 @@
+<%- include('../partials/admin-header', { activeNav: 'settings' }) %>
+
+<div class="admin-header">
+  <div>
+    <h1 class="admin-title">Pengaturan Toko, WhatsApp & Rekening</h1>
+    <div class="admin-subtitle">Atur nomor WhatsApp admin secara manual, nomor rekening bank, QRIS pembayaran, dan info 3 cabang</div>
+  </div>
+</div>
+
+<% if (success === 'settings_saved') { %>
+  <div class="alert alert-success">
+    <i class="bi bi-check-circle-fill"></i> Pengaturan WhatsApp, Rekening, dan QRIS toko berhasil disimpan!
+  </div>
+<% } else if (success === 'branch_updated') { %>
+  <div class="alert alert-success">
+    <i class="bi bi-check-circle-fill"></i> Informasi cabang toko berhasil diperbarui!
+  </div>
+<% } %>
+
+<div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 30px;">
+  
+  <!-- Left Column: WhatsApp, Bank, QRIS, General -->
+  <div>
+    <form action="/admin/pengaturan" method="POST" enctype="multipart/form-data">
+      
+      <!-- WhatsApp Settings -->
+      <div class="admin-card">
+        <h3 style="font-size: 1.2rem; font-weight: 700; color: #25D366; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+          <i class="bi bi-whatsapp"></i> 1. Pengaturan Nomor WhatsApp Admin (Manual Input)
+        </h3>
+        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 20px;">
+          Nomor ini akan menerima pesan otomatis setiap kali ada pelanggan yang checkout pesanan ponsel.
+        </p>
+
+        <div class="form-group">
+          <label class="form-label">Nomor WhatsApp Admin Aktif *</label>
+          <div style="position: relative;">
+            <input type="text" name="whatsapp_admin" class="form-control" placeholder="Contoh: 6281234567890 atau 081234567890" value="<%= settings.whatsapp_admin || '' %>" required>
+          </div>
+          <div class="form-hint">Dapat diubah kapan saja secara manual. Pastikan nomor aktif dengan format 628... atau 08...</div>
+        </div>
+      </div>
+
+      <!-- Bank Accounts Settings -->
+      <div class="admin-card">
+        <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--accent-gold-light); margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+          <i class="bi bi-bank"></i> 2. Pengaturan Nomor Rekening Pembayaran
+        </h3>
+        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 20px;">
+          Nomor rekening ini akan ditampilkan kepada customer saat checkout pembayaran metode Transfer Bank.
+        </p>
+
+        <!-- Rekening 1 -->
+        <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; margin-bottom: 18px;">
+          <div style="font-weight: 700; color: #fff; margin-bottom: 12px; font-size: 0.95rem;">Rekening Utama (1)</div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div class="form-group" style="margin-bottom: 10px;">
+              <label class="form-label">Nama Bank</label>
+              <input type="text" name="bank_name" class="form-control" value="<%= settings.bank_name || 'BCA (Bank Central Asia)' %>">
+            </div>
+            <div class="form-group" style="margin-bottom: 10px;">
+              <label class="form-label">Nomor Rekening</label>
+              <input type="text" name="bank_account" class="form-control" value="<%= settings.bank_account || '8910452391' %>">
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Atas Nama Rekening</label>
+            <input type="text" name="bank_holder" class="form-control" value="<%= settings.bank_holder || 'ANUGRAH CELL UNGARAN' %>">
+          </div>
+        </div>
+
+        <!-- Rekening 2 -->
+        <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px;">
+          <div style="font-weight: 700; color: #fff; margin-bottom: 12px; font-size: 0.95rem;">Rekening Cadangan / Alternatif (2)</div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div class="form-group" style="margin-bottom: 10px;">
+              <label class="form-label">Nama Bank</label>
+              <input type="text" name="bank_name_2" class="form-control" value="<%= settings.bank_name_2 || 'BRI (Bank Rakyat Indonesia)' %>">
+            </div>
+            <div class="form-group" style="margin-bottom: 10px;">
+              <label class="form-label">Nomor Rekening</label>
+              <input type="text" name="bank_account_2" class="form-control" value="<%= settings.bank_account_2 || '602101018928531' %>">
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Atas Nama Rekening</label>
+            <input type="text" name="bank_holder_2" class="form-control" value="<%= settings.bank_holder_2 || 'ANUGRAH CELL UNGARAN' %>">
+          </div>
+        </div>
+      </div>
+
+      <!-- QRIS Settings -->
+      <div class="admin-card">
+        <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--accent-gold-light); margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+          <i class="bi bi-qr-code"></i> 3. Pengaturan Gambar QRIS Toko
+        </h3>
+        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 16px;">
+          Upload gambar QRIS resmi toko Anda (bisa dari BCA, Nobu, ShopeePay, Dana, dll).
+        </p>
+
+        <div style="display: flex; gap: 20px; align-items: center; margin-bottom: 15px;">
+          <img src="<%= settings.qris_image || '/images/qris-sample.png' %>" alt="QRIS Preview" style="width: 130px; height: 130px; object-fit: contain; background: #fff; padding: 6px; border-radius: 6px;">
+          <div style="flex: 1;">
+            <label class="form-label">Upload Gambar QRIS Baru (PNG / JPG)</label>
+            <input type="file" name="qris_file" class="form-control" accept="image/*">
+            <div class="form-hint">Ukuran file maksimal 5MB. Pastikan QR code jelas dan mudah discan pelanggan.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- General Store Info -->
+      <div class="admin-card">
+        <h3 style="font-size: 1.2rem; font-weight: 700; color: #fff; margin-bottom: 15px;">
+          <i class="bi bi-shop text-gold"></i> 4. Identitas & Slogan Toko
+        </h3>
+
+        <div class="form-group">
+          <label class="form-label">Nama Website / Toko</label>
+          <input type="text" name="store_name" class="form-control" value="<%= settings.store_name || 'Anugrah Cell Ungaran' %>">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Slogan / Tagline Toko</label>
+          <input type="text" name="store_tagline" class="form-control" value="<%= settings.store_tagline || '' %>">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Alamat Toko Pusat (Harjosari)</label>
+          <textarea name="store_address_main" class="form-control" rows="2"><%= settings.store_address_main || '' %></textarea>
+        </div>
+      </div>
+
+      <!-- Chatbot Gemini AI & Multi API Key Settings -->
+      <div class="admin-card" style="border-left: 4px solid #00d4ff;">
+        <h3 style="font-size: 1.2rem; font-weight: 700; color: #00d4ff; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+          <i class="bi bi-robot"></i> 5. Otak Chatbot Konsultan Gemini AI & Slot Multi API Key
+        </h3>
+        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 18px; line-height: 1.5;">
+          Chatbot konsultan pintar ini otomatis memahami seluruh spesifikasi HP, harga, stok realtime di database, 3 cabang toko, dan membantu pelanggan sampai <strong>closing pembelian</strong>.
+        </p>
+
+        <!-- Bot Identity -->
+        <div style="display: flex; gap: 16px; align-items: center; margin-bottom: 18px; background: rgba(0, 212, 255, 0.05); padding: 12px; border-radius: 10px; border: 1px solid rgba(0, 212, 255, 0.2);">
+          <img src="/images/bot-avatar.jpg" alt="Avatar Alika" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid #00d4ff;">
+          <div style="flex: 1;">
+            <div style="font-weight: 800; color: #fff; font-size: 0.95rem;">Asisten Konsultan: Alika (Sales AI)</div>
+            <div style="font-size: 0.75rem; color: #94a3b8;">Avatar aktif terpasang pada floating chat widget & jendela konsultasi.</div>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label class="form-label">Nama Panggilan Bot Sales</label>
+          <input type="text" name="bot_name" class="form-control" value="<%= settings.bot_name || 'Alika' %>" placeholder="Contoh: Alika">
+        </div>
+
+        <!-- Unlimited Gemini API Keys -->
+        <div class="form-group" style="margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <label class="form-label" style="margin-bottom: 0;">
+              <i class="bi bi-key-fill text-gold"></i> Slot Gemini API Key (Bisa Lebih Dari Satu / Tanpa Batas)
+            </label>
+            <% const activeKeysArr = (settings.gemini_api_keys || '').split(/[\n,;]+/).map(k => k.trim()).filter(k => k.length >= 10); %>
+            <span id="keyCounterBadge" style="font-size: 0.75rem; background: rgba(16, 185, 129, 0.15); color: #10b981; padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.3); font-weight: 700;">
+              🟢 <%= activeKeysArr.length %> Key Aktif di Database
+            </span>
+          </div>
+          <textarea name="gemini_api_keys" id="geminiKeysInput" class="form-control" rows="4" placeholder="Masukkan 1 atau lebih Gemini API Key di sini (1 key per baris):&#10;AQ.Ab8RN6xxxxxxxxxxxx1&#10;AQ.Ab8RN6yyyyyyyyyyyy2&#10;AIzaSyBzzzzzzzzzzzzzz3"><%= settings.gemini_api_keys || '' %></textarea>
+          <div class="form-hint" style="margin-top: 6px;">
+            💡 <strong>Auto-Save & Multi-Key Rotation:</strong> Masukkan 2, 3, atau banyak API Key sekaligus (1 key per baris). Klik <strong>Simpan & Aktifkan API Key</strong> di bawah agar server langsung mengirim seluruh key ke database dan mengaktifkannya secara otomatis dengan model <code>gemini-flash-lite-latest</code> yang hemat >90% kuota!
+          </div>
+
+          <!-- Action Buttons right inside the API Key card -->
+          <div style="margin-top: 12px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <button type="button" class="btn btn-gold btn-sm" onclick="saveGeminiKeysInstant()" style="font-weight: 700;">
+              <i class="bi bi-cloud-arrow-up-fill"></i> Simpan & Aktifkan API Key Sekarang
+            </button>
+            <button type="button" class="btn btn-outline-gold btn-sm" onclick="testGeminiConnection()">
+              <i class="bi bi-lightning-charge-fill"></i> Tes & Validasi Semua Key
+            </button>
+          </div>
+
+          <!-- Status Output & Active Key List -->
+          <div id="testKeyStatus" style="margin-top: 12px; font-size: 0.82rem; font-weight: 600;"></div>
+
+          <div id="activeKeysContainer" style="margin-top: 12px; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 12px;">
+            <div style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+              Daftar API Key Tersimpan & Aktif di Server Database:
+            </div>
+            <div id="activeKeysList" style="display: flex; flex-direction: column; gap: 6px;">
+              <% if (activeKeysArr.length === 0) { %>
+                <div style="font-size: 0.8rem; color: #f59e0b;">Belum ada API Key tersimpan di database.</div>
+              <% } else { %>
+                <% activeKeysArr.forEach((k, idx) => { %>
+                  <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); padding: 6px 10px; border-radius: 6px; font-size: 0.8rem;">
+                    <span style="color: #e2e8f0; font-family: monospace;"><strong>Key #<%= idx + 1 %>:</strong> <%= k.substring(0, 10) %>...<%= k.substring(k.length - 4) %></span>
+                    <span style="color: #10b981; font-weight: 700; font-size: 0.75rem;">🟢 Tersimpan & Aktif</span>
+                  </div>
+                <% }) %>
+              <% } %>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0;">
+          <label class="form-label">Pesan Pembuka (Greeting Message)</label>
+          <textarea name="bot_greeting" class="form-control" rows="2"><%= settings.bot_greeting || 'Halo Kak! Selamat datang di Anugrah Cell Ungaran. Saya Alika, konsultan gadget resmi siap membantu kakak memilih smartphone terbaik bergaransi resmi. Ada yang bisa Alika bantu?' %></textarea>
+        </div>
+      </div>
+
+      <div style="margin-top: 25px; margin-bottom: 40px;">
+        <button type="submit" class="btn btn-gold btn-lg" style="width: 100%;">
+          <i class="bi bi-save-fill"></i> Simpan Semua Pengaturan
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- Right Column: 3 Branches Editor -->
+  <div>
+    <div class="admin-card">
+      <h3 style="font-size: 1.2rem; font-weight: 700; color: #fff; margin-bottom: 10px;">
+        <i class="bi bi-buildings-fill text-gold"></i> Kelola 3 Cabang Kab. Semarang
+      </h3>
+      <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 20px;">
+        Perbarui alamat, telepon, atau jam buka ketiga cabang toko Anugrah Cell.
+      </p>
+
+      <div style="display: flex; flex-direction: column; gap: 20px;">
+        <% branches.forEach(br => { %>
+          <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid <%= br.is_main ? 'var(--border-gold)' : 'var(--border-color)' %>; border-radius: 10px; padding: 18px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <strong style="color: #fff; font-size: 1rem;"><%= br.name %></strong>
+              <% if (br.is_main) { %>
+                <span class="status-badge status-pending" style="font-size: 0.7rem;">Pusat</span>
+              <% } %>
+            </div>
+
+            <form action="/admin/cabang/edit/<%= br.id %>" method="POST">
+              <div class="form-group" style="margin-bottom: 10px;">
+                <label class="form-label" style="font-size: 0.8rem;">Nama Cabang</label>
+                <input type="text" name="name" class="form-control" style="font-size: 0.88rem; padding: 8px 12px;" value="<%= br.name %>" required>
+              </div>
+
+              <div class="form-group" style="margin-bottom: 10px;">
+                <label class="form-label" style="font-size: 0.8rem;">Alamat Lengkap</label>
+                <textarea name="address" class="form-control" style="font-size: 0.85rem; padding: 8px 12px;" rows="2" required><%= br.address %></textarea>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label class="form-label" style="font-size: 0.8rem;">Telepon / WA</label>
+                  <input type="text" name="phone" class="form-control" style="font-size: 0.85rem; padding: 8px 12px;" value="<%= br.phone %>">
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label class="form-label" style="font-size: 0.8rem;">Jam Operasional</label>
+                  <input type="text" name="opening_hours" class="form-control" style="font-size: 0.85rem; padding: 8px 12px;" value="<%= br.opening_hours %>">
+                </div>
+              </div>
+
+              <div class="form-group" style="margin-bottom: 14px;">
+                <label class="form-label" style="font-size: 0.8rem;">Link Google Maps</label>
+                <input type="text" name="maps_url" class="form-control" style="font-size: 0.85rem; padding: 8px 12px;" value="<%= br.maps_url || '' %>">
+              </div>
+
+              <button type="submit" class="btn btn-outline-gold btn-sm" style="width: 100%;">
+                <i class="bi bi-check-lg"></i> Perbarui Cabang Ini
+              </button>
+            </form>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function renderActiveKeyBadges(keysList, isVerified) {
+  const listEl = document.getElementById('activeKeysList');
+  const badgeEl = document.getElementById('keyCounterBadge');
+  if (badgeEl) {
+    badgeEl.innerHTML = '🟢 ' + keysList.length + ' Key Aktif di Database';
+  }
+  if (!listEl) return;
+
+  if (keysList.length === 0) {
+    listEl.innerHTML = '<div style="font-size: 0.8rem; color: #f59e0b;">Belum ada API Key tersimpan di database.</div>';
+    return;
+  }
+
+  listEl.innerHTML = keysList.map(item => {
+    const statusText = isVerified ? item.message : '🟢 Tersimpan di Database & Aktif';
+    const isOk = isVerified ? item.ok : true;
+    const borderColor = isOk ? 'rgba(16, 185, 129, 0.35)' : 'rgba(239, 68, 68, 0.35)';
+    const bgColor = isOk ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)';
+    const textColor = isOk ? '#10b981' : '#ef4444';
+
+    return '<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; background: ' + bgColor + '; border: 1px solid ' + borderColor + '; padding: 7px 10px; border-radius: 6px; font-size: 0.8rem;">' +
+      '<span style="color: #e2e8f0; font-family: monospace;"><strong>Key #' + item.index + ':</strong> ' + item.maskedKey + '</span>' +
+      '<span style="color: ' + textColor + '; font-weight: 700; font-size: 0.76rem;">' + statusText + '</span>' +
+    '</div>';
+  }).join('');
+}
+
+async function saveGeminiKeysInstant() {
+  const input = document.getElementById('geminiKeysInput').value.trim();
+  const statusEl = document.getElementById('testKeyStatus');
+
+  statusEl.innerHTML = '<span style="color: #00d4ff;"><i class="bi bi-hourglass-split"></i> Menyimpan API Key ke database & mengaktifkan...</span>';
+  try {
+    const res = await fetch('/admin/save-gemini-keys', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ keys: input })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      statusEl.innerHTML = '<span style="color: #10b981; font-weight: 700;">' + data.message + '</span>';
+      if (data.keysList) {
+        renderActiveKeyBadges(data.keysList, false);
+      }
+    } else {
+      statusEl.innerHTML = '<span style="color: #ef4444; font-weight: 600;">' + data.message + '</span>';
+    }
+  } catch (err) {
+    statusEl.innerHTML = '<span style="color: #ef4444;">❌ Gagal menyimpan ke server: ' + err.message + '</span>';
+  }
+}
+
+async function testGeminiConnection() {
+  const input = document.getElementById('geminiKeysInput').value.trim();
+  const statusEl = document.getElementById('testKeyStatus');
+
+  if (!input || input.length < 10) {
+    statusEl.innerHTML = '<span style="color: #ef4444;">❌ Harap isi minimal 1 API Key Gemini terlebih dahulu.</span>';
+    return;
+  }
+
+  statusEl.innerHTML = '<span style="color: #00d4ff;"><i class="bi bi-hourglass-split"></i> Menyimpan ke Database & menguji seluruh API Key ke Google Gemini...</span>';
+  try {
+    const res = await fetch('/admin/test-gemini-key', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ keys: input })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      statusEl.innerHTML = '<span style="color: #10b981; font-weight: 700;">' + data.message + '</span>';
+    } else {
+      statusEl.innerHTML = '<span style="color: #ef4444; font-weight: 600;">' + data.message + '</span>';
+    }
+    if (data.results && data.results.length > 0) {
+      renderActiveKeyBadges(data.results, true);
+    }
+  } catch (err) {
+    statusEl.innerHTML = '<span style="color: #ef4444;">❌ Gagal menghubungi server: ' + err.message + '</span>';
+  }
+}
+</script>
+
+<%- include('../partials/admin-footer') %>

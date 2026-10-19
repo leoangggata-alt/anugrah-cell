@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: anugrah-cell
+    env: node
+    plan: free
+    region: singapore
+    buildCommand: npm install
+    startCommand: npm start
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: GEMINI_API_KEY
+        value: AQ.Ab8RN6JahjWyf081N76gkwySXTXYMGUOVEWnrwhgRPtjaF4SUg
